@@ -1,31 +1,52 @@
 import XCTest
 
-func compare<T>(name: String,
-                fromJson: ([String: Any]) -> T,
-                generate: (T) -> [String: Any],
-                omit: [String] = []
+func compare<T>(
+    name: String,
+    fromJson: ([String : Any]) -> T,
+    generate: (T) -> [String: Any],
+    omit: [String] = []
 ) {
-    compareSingle(name: name, fromJson: fromJson, generate: generate, omit: omit)
-    compareSingle(name: name + "Nullable", fromJson: fromJson, generate: generate, omit: omit)
+    compareSingleCore(name: name, fromJson: fromJson, generate: generate, omit: omit)
+    compareSingleCore(name: name + "Nullable", fromJson: fromJson, generate: generate, omit: omit)
 }
 
-func compareSingle<T>(name: String,
-                fromJson: ([String: Any]) -> T,
-                generate: (T) -> [String: Any],
-                omit: [String] = []
+func compare<T>(
+    name: String,
+    fromJson: ([String : Any]?) -> T?,
+    generate: (T?) -> [String: Any]?,
+    omit: [String] = []
+) {
+    let fromJsonAdapter: ([String: Any]) -> T? = { dict in fromJson(dict) }
+    let generateAdapter: (T?) -> [String: Any] = { value in generate(value)! }
+    
+    compareSingleCore(name: name, fromJson: fromJsonAdapter, generate: generateAdapter, omit: omit)
+    compareSingleCore(name: name + "Nullable", fromJson: fromJsonAdapter, generate: generateAdapter, omit: omit)
+}
+
+private func compareSingleCore<U>(
+    name: String,
+    fromJson: ([String: Any]) -> U,
+    generate: (U) -> [String: Any],
+    omit: [String] = []
 ) {
     do {
         var expected = try readJSONFile(forName: name)
         for s in omit {
             expected = omitDeep(dict: expected, path: s.components(separatedBy: "."), index: 0)
         }
+        
         var actual = generate(fromJson(expected))
         for s in omit {
             actual = omitDeep(dict: actual, path: s.components(separatedBy: "."), index: 0)
         }
         actual = removeNulls(input: actual)
+        
         XCTAssertEqual(expected as NSDictionary, actual as NSDictionary)
-    } catch { }
+    } catch {
+        if !(name.hasSuffix("Nullable") && String(describing: error) == "file not found") {
+            XCTFail(String(describing: error))
+        }
+    }
 }
 
 func omitDeep(dict: [String: Any], path: [String], index: Int) -> [String: Any] {
@@ -54,16 +75,18 @@ func omitDeep(arr: Array<Any>, path: [String], index: Int) -> Array<Any> {
     return mutableArr
 }
 
-func removeNulls(input: [String: Any]) -> [String: Any] {
+func removeNulls(input: [String: Any?]) -> [String: Any] {
     var result = input
     for (key, value) in input {
-        if (value as! NSObject == NSNull()) {
+        guard let value else {
             result.removeValue(forKey: key)
-        } else if (value is [String: Any]) {
-            result[key] = removeNulls(input: value as! [String: Any])
+            continue
+        }
+        if value is [String: Any?] {
+            result[key] = removeNulls(input: value as! [String : Any?])
         }
     }
-    return result
+    return result as [String: Any]
 }
 
 func readJSONFile(forName name: String) throws -> [String: Any] {

@@ -3,13 +3,14 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven {
-            url "https://maven.regulaforensics.com/RegulaDocumentReader/Beta"
+            url "https://maven.regulaforensics.com/RegulaDocumentReader"
         }
     }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     namespace 'com.regula.plugin.idv'
@@ -26,17 +27,19 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+    buildFeatures {
+        dataBinding true
+    }
 
     dependencies {
-        implementation('com.regula.idv:api:3.1.66') {
+        implementation('com.regula.idv:api:3.1.89') {
             transitive = true
         }
 
         testImplementation 'junit:junit:4.13.2'
-        testImplementation 'androidx.test:core:1.6.1'
-        testImplementation 'org.robolectric:robolectric:4.11.1'
-        testImplementation 'org.json:json:20240303'
-        testImplementation 'org.skyscreamer:jsonassert:1.5.1'
+        testImplementation 'androidx.test:core:1.7.0'
+        testImplementation 'org.json:json:20250517'
+        testImplementation 'org.skyscreamer:jsonassert:1.5.3'
     }
 
     testOptions {

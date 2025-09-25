@@ -2,10 +2,11 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id "kotlin-kapt"
 }
 
 android {
-    namespace = "com.regula.example.idv"
+    namespace = "com.regula.example.idv.flutter"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -15,11 +16,15 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.regula.example.idv"
+        applicationId = "com.regula.example.idv.flutter"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    buildFeatures {
+        dataBinding true
     }
 
     buildTypes {

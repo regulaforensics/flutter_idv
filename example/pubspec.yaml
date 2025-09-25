@@ -14,8 +14,10 @@ dependencies:
     sdk: flutter
   flutter_idv:
     path: ../
-  flutter_idv_module_document_reader: 3.1.37-beta
-  flutter_idv_module_face: 3.1.38-beta
+  flutter_idv_module_document_reader: 3.1.67-beta
+  flutter_idv_module_face: 3.1.68-beta
+  flutter_document_reader_core_fullauthrfid: 8.2.561
+  flutter_face_core_basic: 7.2.235
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
@@ -24,7 +26,4 @@ dev_dependencies:
   lints: ^5.0.0
 
 flutter:
-  assets:
-    - assets/
-    - assets/images/
   uses-material-design: true

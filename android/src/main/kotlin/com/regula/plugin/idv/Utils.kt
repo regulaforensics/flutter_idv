@@ -3,6 +3,9 @@ package com.regula.plugin.idv
 import org.json.JSONArray
 import org.json.JSONObject
 
+inline fun <reified T> args(index: Int) = argsNullable<T>(index)!!
+typealias Callback = (Any?) -> Unit
+
 fun List<*>.toJson(): JSONArray {
     val result = JSONArray()
     for (i in indices)
@@ -48,5 +51,10 @@ fun JSONObject.getJSONObjectOrNull(name: String): JSONObject? {
 
 fun JSONObject.getStringOrNull(name: String): String? {
     if (has(name) && get(name).toString() != "null") return getString(name)
+    return null
+}
+
+fun JSONObject.getIntOrNull(name: String): Int? {
+    if (has(name) && get(name).toString() != "null") return getInt(name)
     return null
 }

@@ -2,65 +2,74 @@
 
 package com.regula.plugin.idv
 
-import com.regula.idv.api.config.IdvApiKeyConnectionConfig
-import com.regula.idv.api.config.IdvConnectionConfig
-import com.regula.idv.api.config.IdvPrepareWorkflowConfig
-import com.regula.idv.api.config.IdvStartWorkflowConfig
-import com.regula.idv.api.config.IdvUrlConnectionConfig
-import com.regula.idv.api.models.IdvWorkflowModel
-import com.regula.idv.api.models.IdvWorkflowStepModel
-import com.regula.idv.api.models.SessionResult
+import com.regula.idv.api.config.ApiKeyConnectionConfig
+import com.regula.idv.api.config.CredentialsConnectionConfig
+import com.regula.idv.api.config.PrepareWorkflowConfig
+import com.regula.idv.api.config.StartWorkflowConfig
+import com.regula.idv.api.config.TokenConnectionConfig
+import com.regula.idv.api.models.WorkflowResult
+import com.regula.idv.api.models.Workflow
+import com.regula.idv.api.models.WorkflowStep
 import com.regula.idv.module.BaseException
 import org.json.JSONObject
 
-fun generateCompletion(success: Boolean, value: Any?, error: BaseException?) = mapOf(
+fun generateCompletion(success: Any?, error: BaseException?) = mapOf(
     "success" to success,
-    "value" to value,
-    "errorMessage" to error?.message
+    "error" to error?.message
 ).toJson()
 
 // Config ------------------------------
 
-fun connectionConfigFromJSON(it: JSONObject) = IdvConnectionConfig(
-    it.getString("url"),
+fun credentialsConnectionConfigFromJSON(it: JSONObject) = CredentialsConnectionConfig(
+    it.getString("baseUrl"),
     it.getString("userName"),
     it.getString("password")
-)
+).let { self ->
+    self.httpTimeoutMs = it.getIntOrNull("httpTimeoutMs")
+    return@let self
+}
 
-fun generateConnectionConfig(it: IdvConnectionConfig) = mapOf(
-    "url" to it.url,
+fun generateCredentialsConnectionConfig(it: CredentialsConnectionConfig) = mapOf(
+    "baseUrl" to it.baseUrl,
     "userName" to it.userName,
     "password" to it.password,
+    "httpTimeoutMs" to it.httpTimeoutMs,
 ).toJson()
 
-fun urlConnectionConfigFromJSON(it: JSONObject) = IdvUrlConnectionConfig(
+fun tokenConnectionConfigFromJSON(it: JSONObject) = TokenConnectionConfig(
     it.getString("url")
 )
 
-fun generateUrlConnectionConfig(it: IdvUrlConnectionConfig) = mapOf(
-    "url" to it.url,
+fun generateTokenConnectionConfig(it: TokenConnectionConfig) = mapOf(
+    "url" to it.baseUrl,
 ).toJson()
 
-fun apiKeyConnectionConfigFromJSON(it: JSONObject) = IdvApiKeyConnectionConfig(
-    it.getString("url"),
+fun apiKeyConnectionConfigFromJSON(it: JSONObject) = ApiKeyConnectionConfig(
+    it.getString("baseUrl"),
     it.getString("apiKey"),
-)
+    it.getIntOrNull("ttl"),
+).let { self ->
+    self.httpTimeoutMs = it.getIntOrNull("httpTimeoutMs")
+    return@let self
+}
 
-fun generateApiKeyConnectionConfig(it: IdvApiKeyConnectionConfig) = mapOf(
-    "url" to it.url,
+fun generateApiKeyConnectionConfig(it: ApiKeyConnectionConfig) = mapOf(
+    "baseUrl" to it.baseUrl,
     "apiKey" to it.apiKey,
+    "ttl" to it.ttl,
+    "httpTimeoutMs" to it.httpTimeoutMs,
 ).toJson()
 
-fun prepareWorkflowConfigFromJSON(it: JSONObject) = IdvPrepareWorkflowConfig(
+fun prepareWorkflowConfigFromJSON(it: JSONObject) = PrepareWorkflowConfig(
     it.getString("workflowId"),
 )
 
-fun generatePrepareWorkflowConfig(it: IdvPrepareWorkflowConfig) = mapOf(
+fun generatePrepareWorkflowConfig(it: PrepareWorkflowConfig) = mapOf(
     "workflowId" to it.workflowId,
 ).toJson()
 
 fun startWorkflowConfigFromJSON(input: JSONObject?) = input?.let { json ->
-    val builder = IdvStartWorkflowConfig.Builder()
+    val builder = StartWorkflowConfig.Builder()
 
     json.getStringOrNull("locale")?.let { builder.setLocale(it) }
     json.getJSONObjectOrNull("metadata")?.let { builder.setMetadata(it) }
@@ -68,26 +77,26 @@ fun startWorkflowConfigFromJSON(input: JSONObject?) = input?.let { json ->
     builder.build()
 }
 
-fun generateStartWorkflowConfig(input: IdvStartWorkflowConfig?) = input?.let {
+fun generateStartWorkflowConfig(input: StartWorkflowConfig?) = input?.let {
     mapOf(
         "locale" to it.locale,
         "metadata" to it.metadata,
     ).toJson()
 }
 
-// Misc ------------------------------
+// Model ------------------------------
 
-fun workflowModelFromJSON(input: JSONObject?) = input?.let {
-    IdvWorkflowModel(
+fun workflowFromJSON(input: JSONObject?) = input?.let {
+    Workflow(
         it.getString("id"),
         it.getString("name"),
         it.getString("version"),
         it.getString("description"),
-        it.getString("defaultLocale"),
+        it.getStringOrNull("defaultLocale"),
     )
 }
 
-fun generateWorkflowModel(input: IdvWorkflowModel?) = input?.let {
+fun generateWorkflow(input: Workflow?) = input?.let {
     mapOf(
         "id" to it.id,
         "name" to it.name,
@@ -97,30 +106,30 @@ fun generateWorkflowModel(input: IdvWorkflowModel?) = input?.let {
     ).toJson()
 }
 
-fun workflowStepModelFromJSON(input: JSONObject?) = input?.let {
-    IdvWorkflowStepModel(
+fun workflowStepFromJSON(input: JSONObject?) = input?.let {
+    WorkflowStep(
         it.getString("id"),
         it.getString("name"),
     )
 }
 
-fun generateWorkflowStepModel(input: IdvWorkflowStepModel?) = input?.let {
+fun generateWorkflowStep(input: WorkflowStep?) = input?.let {
     mapOf(
         "id" to it.id,
         "name" to it.name,
     ).toJson()
 }
 
-fun sessionResultFromJSON(it: JSONObject): SessionResult {
-    val result = SessionResult()
-
-    result.transactionId = it.getStringOrNull("transactionId")
-    result.finalStep = workflowStepModelFromJSON(it.getJSONObjectOrNull("finalStep"))
-
-    return result
+fun workflowResultFromJSON(input: JSONObject?): WorkflowResult? = input?.let {
+    WorkflowResult(
+        it.getString("sessionId"),
+        workflowStepFromJSON(it.getJSONObjectOrNull("finalStep"))!!
+    )
 }
 
-fun generateSessionResult(it: SessionResult) = mapOf(
-    "transactionId" to it.transactionId,
-    "finalStep" to generateWorkflowStepModel(it.finalStep),
-).toJson()
+fun generateWorkflowResult(input: WorkflowResult?) = input?.let {
+    mapOf(
+        "sessionId" to it.sessionId,
+        "finalStep" to generateWorkflowStep(it.finalStep),
+    ).toJson()
+}

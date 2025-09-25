@@ -1,99 +1,134 @@
 import Foundation
 import UIKit
 import IDVSDK
+import IDVModule
 
-extension Result {
-    var failureOrNil: Failure? {
-        if case .failure(let error) = self { return error }
-        else { return nil }
-    }
-
-    var successOrNil: Success? {
-        if case .success(let value) = self { return value }
-        else { return nil }
-    }
+public func generateCompletion(_ value: Any?, _ error: IDVModule.BaseError?) -> [String: Any?] {
+    return [
+        "success": value,
+        "error": error?.fullChain
+    ]
 }
 
-public class JSONConstructor {
+// MARK: - Config
+
+public func credentialsConnectionConfigFromJSON(_ data: [String: Any?]) -> CredentialsConnectionConfig {
+    let result = CredentialsConnectionConfig (userName: data["userName"] as! String,
+                                              password: data["password"] as! String,
+                                              baseURL: data["baseUrl"] as! String)
+    if let httpTimeoutMs = data["httpTimeoutMs"] as? NSNumber { result.httpTimeoutMs = httpTimeoutMs }
+    return result
+}
+
+public func generateCredentialsConnectionConfig(_ data: CredentialsConnectionConfig) -> [String: Any?] {
+    return [
+        "baseUrl": data.baseURL,
+        "userName": data.userName,
+        "password": data.password,
+        "httpTimeoutMs": data.httpTimeoutMs,
+    ]
+}
+
+public func tokenConnectionConfigFromJSON(_ data: [String: Any?]) -> TokenConnectionConfig {
+    return TokenConnectionConfig(url: data["url"] as! String)
+}
+
+public func generateTokenConnectionConfig(_ data: TokenConnectionConfig) -> [String: Any?] {
+    return [
+        "url": data.url
+    ]
+}
+
+public func apiKeyConnectionConfigFromJSON(_ data: [String: Any?]) -> ApiKeyConnectionConfig {
+    let result = ApiKeyConnectionConfig(apiKey: data["apiKey"] as! String,
+                                        baseURL: data["baseUrl"] as! String,
+                                        ttl: data["ttl"] as? NSNumber)
+    if let httpTimeoutMs = data["httpTimeoutMs"] as? NSNumber { result.httpTimeoutMs = httpTimeoutMs }
+    return result
+}
+
+public func generateApiKeyConnectionConfig(_ data: ApiKeyConnectionConfig) -> [String: Any?] {
+    return [
+        "baseUrl": data.baseURL,
+        "apiKey": data.apiKey,
+        "ttl": data.ttl,
+        "httpTimeoutMs": data.httpTimeoutMs,
+    ]
+}
+
+public func prepareWorkflowConfigFromJSON(_ data: [String: Any?]) -> PrepareWorkflowConfig {
+    return PrepareWorkflowConfig(workflowId: data["workflowId"] as! String)
+}
+
+public func generatePrepareWorkflowConfig(_ data: PrepareWorkflowConfig) -> [String: Any?] {
+    return [
+        "workflowId": data.workflowId
+    ]
+}
+
+public func startWorkflowConfigFromJSON(input: [String: Any?]?) -> StartWorkflowConfig {
+    let result = StartWorkflowConfig.default()
+    guard let data = input else { return result }
     
-    // MARK: - Utils
+    if let locale = data["locale"] as? String { result.locale = locale }
+    if let metadata = data["metadata"] as? [String: Any] { result.metadata = metadata }
     
-    public static func toSendable(_ input: Any?) -> Any? {
-        guard let input = input, !(input is NSNull) else { return nil }
-        
-        if let dict = input as? [String: Any],
-           JSONSerialization.isValidJSONObject(dict) {
-            if let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted),
-               let jsonString = String(data: data, encoding: .utf8) {
-                return jsonString
-            }
-        }
-        
-        if let arr = input as? [Any],
-           JSONSerialization.isValidJSONObject(arr) {
-            if let data = try? JSONSerialization.data(withJSONObject: arr, options: .prettyPrinted),
-               let jsonString = String(data: data, encoding: .utf8) {
-                return jsonString
-            }
-        }
-        
-        return input
-    }
-    
-    private static func convertArray(_ input: [Any], _ converter: (Any) -> Any?) -> [Any] {
-        return input.compactMap { converter($0) }
-    }
-    
-    public static func generateArray(_ input: [Any]?, _ toJson: (Any) -> Any?) -> Any {
-        guard let input = input else { return NSNull() }
-        return convertArray(input, toJson)
-    }
-    
-    public static func arrayFromJSON(_ input: [Any]?, _ fromJson: (Any) -> Any?) -> Any? {
-        guard let input = input, !(input is NSNull) else { return nil }
-        return convertArray(input, fromJson)
-    }
-    
-    public static func base64Decode(_ input: String?) -> Data? {
-        guard var input = input, !(input is NSNull) else { return nil }
-        if input.hasPrefix("data"),
-           let commaIndex = input.firstIndex(of: ",") {
-            input = String(input[input.index(after: commaIndex)...])
-        }
-        return Data(base64Encoded: input)
-    }
-    
-    public static func base64Encode(_ input: Data?) -> Any {
-        guard let input = input else { return NSNull() }
-        return input.base64EncodedString()
-    }
-    
-    public static func imageWithBase64(_ input: String?) -> UIImage? {
-        guard let data = base64Decode(input) else { return nil }
-        return UIImage(data: data)
-    }
-    
-    public static func base64WithImage(_ input: UIImage?) -> Any {
-        guard let input = input,
-              let data = input.pngData() else { return NSNull() }
-        return base64Encode(data)
-    }
-    
-    // MARK: - Init
-    
-    public static func generateInitCompletion(_ success: Bool, _ error: Error?) -> [String: Any] {
-        return [
-            "success": success,
-            "error": generateError(error)
-        ]
-    }
-    
-    private static func generateError(_ error: Error?) -> Any {
-        guard let error = error as NSError? else { return NSNull() }
-        return [
-            "code": error.code,
-            "domain": error.domain,
-            "message": error.localizedDescription
-        ]
-    }
+    return result
+}
+
+public func generateStartWorkflowConfig(_ data: StartWorkflowConfig) -> [String: Any?] {
+    return [
+        "locale": data.locale,
+        "metadata": data.metadata
+    ]
+}
+
+// MARK: - Model
+
+public func workflowFromJSON(_ input: [String: Any?]?) -> Workflow? {
+    guard var it = input else { return nil }
+    it["client"] = [String: Any]()
+    it["steps"] = [WorkflowStep]()
+    it["_description"] = it["description"]
+    return try! Workflow(from: it.toDecoder())
+}
+
+public func generateWorkflow(_ input: Workflow?) -> [String: Any?]? {
+    guard let it = input else { return nil }
+    return [
+        "id": it.id,
+        "name": it.name,
+        "version": it.version,
+        "description": it._description,
+        "defaultLocale": it.defaultLocale
+    ]
+}
+
+public func workflowStepFromJSON(_ input: [String: Any?]?) -> WorkflowStep? {
+    guard var it = input else { return nil }
+    it["type"] = ""
+    it["final"] = false
+    it["client"] = [String: Any]()
+    return try! WorkflowStep(from: it.toDecoder())
+}
+
+public func generateWorkflowStep(_ input: WorkflowStep?) -> [String: Any?]? {
+    guard let it = input else { return nil }
+    return [
+        "id": it.id,
+        "name": it.name
+    ]
+}
+
+public func workflowResultFromJSON(_ input: [String: Any?]?) -> WorkflowResult? {
+    guard let it = input else { return nil }
+    return try! WorkflowResult(from: it.toDecoder())
+}
+
+public func generateWorkflowResult(_ input: WorkflowResult?) -> [String: Any?]? {
+    guard let it = input else { return nil }
+    return [
+        "sessionId": it.sessionId,
+        "finalStep": generateWorkflowStep(it.finalStep)
+    ]
 }

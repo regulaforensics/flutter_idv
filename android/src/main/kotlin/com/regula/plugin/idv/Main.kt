@@ -1,31 +1,12 @@
 package com.regula.plugin.idv
 
 import com.regula.idv.api.IdvSdk.Companion.instance
-import com.regula.idv.api.config.IdvInitConfig
+import com.regula.idv.api.config.InitConfig
 import com.regula.idv.api.enums.SessionRestoreMode
 import com.regula.idv.api.listeners.IdvSdkListener
 import com.regula.idv.module.BaseException
 import com.regula.idv.module.IModule
 import org.json.JSONObject
-
-fun methodCall(method: String, callback: Callback): Any = when (method) {
-    "getIsInitialized" -> callback(instance().isInitialized())
-    "getCurrentSessionId" -> callback(instance().currentSessionId())
-    "getSessionRestoreMode" -> callback(instance().sessionRestoreMode.ordinal)
-    "setSessionRestoreMode" -> instance().sessionRestoreMode = SessionRestoreMode.entries[args(0)]
-    "initialize" -> initialize(callback)
-    "configureWithConnectionConfig" -> configureWithConnectionConfig(callback, args(0))
-    "configureWithUrlConnectionConfig" -> configureWithUrlConnectionConfig(callback, args(0))
-    "configureWithApiKeyConnectionConfig" -> configureWithApiKeyConnectionConfig(callback, args(0))
-    "deinitialize" -> instance().deinitialize(context)
-    "prepareWorkflow" -> prepareWorkflow(callback, args(0))
-    "getWorkflows" -> getWorkflows(callback)
-    "startWorkflow" -> startWorkflow(callback, args(0))
-    else -> Unit
-}
-
-inline fun <reified T> args(index: Int) = argsNullable<T>(index)!!
-typealias Callback = (Any?) -> Unit
 
 const val didStartSessionEvent = "didStartSessionEvent"
 const val didEndSessionEvent = "didEndSessionEvent"
@@ -37,19 +18,28 @@ val allModules = listOf(
     "com.regula.idv.face.FaceModule",
 )
 
+fun methodCall(method: String, callback: Callback): Any = when (method) {
+    "setSessionRestoreMode" -> instance().sessionRestoreMode = SessionRestoreMode.entries[args(0)]
+    "getCurrentSessionId" -> callback(instance().currentSessionId())
+    "initialize" -> initialize(callback)
+    "deinitialize" -> deinitialize(callback)
+    "configureWithToken" -> configureWithToken(callback, args(0))
+    "configureWithCredentials" -> configureWithCredentials(callback, args(0))
+    "configureWithApiKey" -> configureWithApiKey(callback, args(0))
+    "prepareWorkflow" -> prepareWorkflow(callback, args(0))
+    "startWorkflow" -> startWorkflow(callback, argsNullable(0))
+    "getWorkflows" -> getWorkflows(callback)
+    else -> Unit
+}
+
 fun initialize(callback: Callback) {
     val includedModules = mutableListOf<IModule>()
-    for (className in allModules) {
-        try {
-            val targetClass = Class.forName(className)
-            includedModules.add(targetClass.getDeclaredConstructor().newInstance() as IModule)
-        } catch (_: Exception) {
-        }
+    for (className in allModules) try {
+        includedModules.add(Class.forName(className).getDeclaredConstructor().newInstance() as IModule)
+    } catch (_: Exception) {
     }
 
-    println("Connected modules: ${includedModules.size}") // TODO remove this line
-
-    instance().initialize(context, IdvInitConfig(includedModules)) {
+    instance().initialize(context, InitConfig(includedModules)) {
         instance().listener = object : IdvSdkListener {
             override fun didStartSession() = sendEvent(didStartSessionEvent)
             override fun didEndSession() = sendEvent(didEndSessionEvent)
@@ -58,41 +48,47 @@ fun initialize(callback: Callback) {
         }
         generateCompletion(
             it.isSuccess,
-            null,
             it.exceptionOrNull() as BaseException?
         ).send(callback)
     }
 }
 
-fun configureWithConnectionConfig(callback: Callback, data: JSONObject) = instance().configure(
-    context,
-    connectionConfigFromJSON(data)
-) {
-    generateCompletion(
-        it.isSuccess,
-        null,
-        it.exceptionOrNull() as BaseException?
-    ).send(callback)
+fun deinitialize(callback: Callback) {
+    instance().deinitialize(context) {
+        generateCompletion(
+            it.isSuccess,
+            it.exceptionOrNull() as BaseException?
+        ).send(callback)
+    }
 }
 
-fun configureWithUrlConnectionConfig(callback: Callback, data: JSONObject) = instance().configure(
+
+fun configureWithToken(callback: Callback, data: JSONObject) = instance().configure(
     context,
-    urlConnectionConfigFromJSON(data)
+    tokenConnectionConfigFromJSON(data)
 ) {
     generateCompletion(
-        it.isSuccess,
         it.getOrNull(),
         it.exceptionOrNull() as BaseException?
     ).send(callback)
 }
 
-fun configureWithApiKeyConnectionConfig(callback: Callback, data: JSONObject) = instance().configure(
+fun configureWithCredentials(callback: Callback, data: JSONObject) = instance().configure(
+    context,
+    credentialsConnectionConfigFromJSON(data)
+) {
+    generateCompletion(
+        it.isSuccess,
+        it.exceptionOrNull() as BaseException?
+    ).send(callback)
+}
+
+fun configureWithApiKey(callback: Callback, data: JSONObject) = instance().configure(
     context,
     apiKeyConnectionConfigFromJSON(data)
 ) {
     generateCompletion(
         it.isSuccess,
-        it.getOrNull(),
         it.exceptionOrNull() as BaseException?
     ).send(callback)
 }
@@ -102,16 +98,7 @@ fun prepareWorkflow(callback: Callback, data: JSONObject) = instance().prepareWo
     prepareWorkflowConfigFromJSON(data)
 ) {
     generateCompletion(
-        it.isSuccess,
-        generateWorkflowModel(it.getOrNull()),
-        it.exceptionOrNull() as BaseException?
-    ).send(callback)
-}
-
-fun getWorkflows(callback: Callback) = instance().getWorkflows {
-    generateCompletion(
-        it.isSuccess,
-        it.getOrNull().toJsonNullable(::generateWorkflowModel),
+        generateWorkflow(it.getOrNull()),
         it.exceptionOrNull() as BaseException?
     ).send(callback)
 }
@@ -119,10 +106,16 @@ fun getWorkflows(callback: Callback) = instance().getWorkflows {
 fun startWorkflow(callback: Callback, data: JSONObject?) = instance().startWorkflow(
     context,
     startWorkflowConfigFromJSON(data)
-) { value, error ->
+) {
     generateCompletion(
-        error == null,
-        generateSessionResult(value),
-        error
+        generateWorkflowResult(it.getOrNull()),
+        it.exceptionOrNull() as BaseException?
+    ).send(callback)
+}
+
+fun getWorkflows(callback: Callback) = instance().getWorkflows {
+    generateCompletion(
+        it.getOrNull().toJsonNullable(::generateWorkflow),
+        it.exceptionOrNull() as BaseException?
     ).send(callback)
 }

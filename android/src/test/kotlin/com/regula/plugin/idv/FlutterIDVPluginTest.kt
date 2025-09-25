@@ -1,21 +1,16 @@
 package com.regula.plugin.idv
 
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
-@Config(shadows = [MyShadowBitmap::class, MyShadowDrawable::class, MyShadowBitmapDrawable::class])
 class FlutterIDVPluginTest {
 
     // Config ------------------------------
 
     @Test
-    fun connectionConfig() = compare("connectionConfig", ::connectionConfigFromJSON, ::generateConnectionConfig)
+    fun credentialsConnectionConfig() = compare("credentialsConnectionConfig", ::credentialsConnectionConfigFromJSON, ::generateCredentialsConnectionConfig)
 
     @Test
-    fun urlConnectionConfig() = compare("urlConnectionConfig", ::urlConnectionConfigFromJSON, ::generateUrlConnectionConfig)
+    fun tokenConnectionConfig() = compare("tokenConnectionConfig", ::tokenConnectionConfigFromJSON, ::generateTokenConnectionConfig)
 
     @Test
     fun apiKeyConnectionConfig() = compare("apiKeyConnectionConfig", ::apiKeyConnectionConfigFromJSON, ::generateApiKeyConnectionConfig)
@@ -29,11 +24,11 @@ class FlutterIDVPluginTest {
     // Model ------------------------------
 
     @Test
-    fun workflowModel() = compare("workflowModel", ::workflowModelFromJSON, ::generateWorkflowModel)
+    fun workflow() = compare("workflow", ::workflowFromJSON, ::generateWorkflow)
 
     @Test
-    fun workflowStepModel() = compare("workflowStepModel", ::workflowStepModelFromJSON, ::generateWorkflowStepModel)
+    fun workflowStep() = compare("workflowStep", ::workflowStepFromJSON, ::generateWorkflowStep)
 
     @Test
-    fun sessionResult() = compare("sessionResult", ::sessionResultFromJSON, ::generateSessionResult)
+    fun workflowResult() = compare("workflowResult", ::workflowResultFromJSON, ::generateWorkflowResult)
 }

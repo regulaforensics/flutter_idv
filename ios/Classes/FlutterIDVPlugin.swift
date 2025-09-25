@@ -1,47 +1,50 @@
 import Flutter
 import UIKit
 
-public typealias Callback = (Any?) -> Void
-public typealias EventSender = (String, Any?) -> Void
+let channelID = "flutter_idv"
 var eventSinks: [String: FlutterEventSink] = [:]
 
-public class FlutterIDVPlugin: NSObject, FlutterPlugin {
-    static let rootViewController: () -> UIViewController? = {
-        for window in UIApplication.shared.windows {
-            if window.isKeyWindow {
-                return window.rootViewController
-            }
+private var args: [Any?] = []
+
+func sendEvent(_ event: String, _ data: Any? = nil) {
+    DispatchQueue.main.async {
+        if let sink = eventSinks[event] {
+            sink(data.toSendable())
         }
-        return nil
     }
-    
+}
+
+func args<T>(_ index: Int) -> T {
+    return args[index] as! T
+}
+
+func argsNullable<T>(_ index: Int) -> T? {
+    if (args[index] is NSNull) { return nil }
+    return args[index] as! T?
+}
+
+public class FlutterIDVPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
         func setupEventChannel(_ eventId: String) {
-            let channel = FlutterEventChannel(name: "flutter_idv/event/\(eventId)", binaryMessenger: registrar.messenger())
-            channel.setStreamHandler(CustomStreamHandler(eventId))
+            let channel = FlutterEventChannel(name: "\(channelID)/event/\(eventId)", binaryMessenger: registrar.messenger())
+            channel.setStreamHandler(GenericStreamHandler(eventId))
         }
         setupEventChannel(didStartSessionEvent);
         setupEventChannel(didEndSessionEvent);
         setupEventChannel(didStartRestoreSessionEvent);
         setupEventChannel(didContinueRemoteSessionEvent);
         
-        let channel = FlutterMethodChannel(name: "flutter_idv/method", binaryMessenger: registrar.messenger())
+        let channel = FlutterMethodChannel(name: "\(channelID)/method", binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(FlutterIDVPlugin(), channel: channel)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let sendEvent: EventSender = { event, data in
-            DispatchQueue.main.async {
-                if let sink = eventSinks[event] {
-                    sink(JSONConstructor.toSendable(data))
-                }
-            }
-        }
-        methodCall(call.method, call.arguments as! [Any], { data in result(JSONConstructor.toSendable(data)) })
+        args = call.arguments as! [Any?]
+        methodCall(call.method, { data in result(data.toSendable()) })
     }
 }
 
-class CustomStreamHandler: NSObject, FlutterStreamHandler {
+class GenericStreamHandler: NSObject, FlutterStreamHandler {
     private let eventId: String
     
     public init(_ eventId: String) {
@@ -57,4 +60,13 @@ class CustomStreamHandler: NSObject, FlutterStreamHandler {
         eventSinks[eventId] = nil
         return nil
     }
+}
+
+let rootViewController: () -> UIViewController? = {
+    for window in UIApplication.shared.windows {
+        if window.isKeyWindow {
+            return window.rootViewController
+        }
+    }
+    return nil
 }

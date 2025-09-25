@@ -5,10 +5,24 @@
 
 IDV is a framework that unifies access to all Regula products.
 
-## Documentation
+## Android Integration
 
-You can find documentation [here](https://docs.regulaforensics.com/develop/idv/mobile/).
+In order to use this plugin, in `android/app/build.gradle` add `kotlin-kapt` plugin and enable `dataBinding`:
+```
+plugins {
+    id "kotlin-kapt"
+}
+
+android {
+    buildFeatures {
+        dataBinding true
+    }
+}
+```
+
+## Documentation
+* [Documentation](https://docs.regulaforensics.com/develop/idv-sdk/mobile)
+* [API Reference](https://pub.dev/documentation/flutter_idv)
 
 ## Support
-
-Please do not hesitate to [contact us](https://support.regulaforensics.com/hc/requests/new), if you need any assistance or want to report a bug / suggest an improvement.
+If you have any technical questions, feel free to [contact](mailto:support@regulaforensics.com) us or create issues [here](https://github.com/regulaforensics/flutter_idv/issues).
