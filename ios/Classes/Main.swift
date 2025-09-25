@@ -82,8 +82,8 @@ func getWorkflows(_ callback: @escaping Callback) {
 
 class IDVDelegate: IDVSDK.IDVDelegate {
     func didStartNewSession(idv: IDV) { sendEvent(didStartSessionEvent) }
-    func didEndSession(idv: IDV) { sendEvent(didStartSessionEvent) }
-    func didStartRestoreSession(idv: IDV) { sendEvent(didStartSessionEvent) }
-    func didContinueRemoteSession(idv: IDV) { sendEvent(didStartSessionEvent) }
+    func didEndSession(idv: IDV) { sendEvent(didEndSessionEvent) }
+    func didStartRestoreSession(idv: IDV) { sendEvent(didStartRestoreSessionEvent) }
+    func didContinueRemoteSession(idv: IDV) { sendEvent(didContinueRemoteSessionEvent) }
 }
 let delegate = IDVDelegate()

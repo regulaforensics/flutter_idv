@@ -52,7 +52,7 @@ class FlutterIDVPlugin : FlutterPlugin, MethodCallHandler {
         binding = flutterBinding
         for (event in arrayOf(
             didStartSessionEvent,
-            didStartSessionEvent,
+            didEndSessionEvent,
             didStartRestoreSessionEvent,
             didContinueRemoteSessionEvent,
         )) setupEventChannel(event)

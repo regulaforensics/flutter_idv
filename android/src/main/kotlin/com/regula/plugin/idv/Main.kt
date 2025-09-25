@@ -40,12 +40,7 @@ fun initialize(callback: Callback) {
     }
 
     instance().initialize(context, InitConfig(includedModules)) {
-        instance().listener = object : IdvSdkListener {
-            override fun didStartSession() = sendEvent(didStartSessionEvent)
-            override fun didEndSession() = sendEvent(didEndSessionEvent)
-            override fun didStartRestoreSession() = sendEvent(didStartRestoreSessionEvent)
-            override fun didContinueRemoteSession() = sendEvent(didContinueRemoteSessionEvent)
-        }
+        instance().listener = listener
         generateCompletion(
             it.isSuccess,
             it.exceptionOrNull() as BaseException?
@@ -118,4 +113,12 @@ fun getWorkflows(callback: Callback) = instance().getWorkflows {
         it.getOrNull().toJsonNullable(::generateWorkflow),
         it.exceptionOrNull() as BaseException?
     ).send(callback)
+}
+
+// Weak references
+var listener = object : IdvSdkListener {
+    override fun didStartSession() = sendEvent(didStartSessionEvent)
+    override fun didEndSession() = sendEvent(didEndSessionEvent)
+    override fun didStartRestoreSession() = sendEvent(didStartRestoreSessionEvent)
+    override fun didContinueRemoteSession() = sendEvent(didContinueRemoteSessionEvent)
 }
