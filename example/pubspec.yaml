@@ -14,10 +14,12 @@ dependencies:
     sdk: flutter
   flutter_idv:
     path: ../
+  flutter_document_reader_api: 8.3.496
+  flutter_face_api: 7.2.407
+  flutter_document_reader_core_fullauthrfid: 8.3.772
+  flutter_face_core_basic: 7.2.235
   flutter_idv_module_document_reader: 3.1.67-beta
   flutter_idv_module_face: 3.1.68-beta
-  flutter_document_reader_core_fullauthrfid: 8.2.561
-  flutter_face_core_basic: 7.2.235
   cupertino_icons: ^1.0.8
 
 dev_dependencies:

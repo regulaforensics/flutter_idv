@@ -27,8 +27,6 @@ void init() async {
   var (wfs, error) = await idv.getWorkflows();
   if (handleException(error, tag: "getWorkflows")) return;
   if (loginType == Configuration.token) {
-    // Not consistent, sometimes wfs and workflowIds don't intersect.
-    // May be use prepareWorkflow for each workflowId to get its name instead.
     wfs = wfs!.where((wf) => workflowIds.contains(wf.id)).toList();
   }
 
