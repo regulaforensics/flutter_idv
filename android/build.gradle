@@ -1,0 +1,57 @@
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://maven.regulaforensics.com/RegulaDocumentReader"
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    namespace 'com.regula.plugin.idv'
+    compileSdk 36
+
+    defaultConfig {
+        minSdk 24
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        dataBinding true
+    }
+
+    dependencies {
+        implementation('com.regula.idv:api:3.1.89') {
+            transitive = true
+        }
+
+        testImplementation 'junit:junit:4.13.2'
+        testImplementation 'androidx.test:core:1.7.0'
+        testImplementation 'org.json:json:20250517'
+        testImplementation 'org.skyscreamer:jsonassert:1.5.3'
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+        unitTests.all {
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen { false }
+                showStandardStreams = true
+            }
+        }
+    }
+}

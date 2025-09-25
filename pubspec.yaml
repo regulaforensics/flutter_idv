@@ -1,0 +1,30 @@
+name: flutter_idv
+description: 
+  This is a flutter module for Regula IDV.
+  It allows you to easily integrate Regula IDV into your Flutter application. Supports Android and iOS.
+repository: https://github.com/regulaforensics/flutter_idv
+issue_tracker: https://github.com/regulaforensics/flutter_idv/issues
+version: 3.1.115
+
+environment:
+  sdk: '>=3.1.5 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^4.0.0
+  meta: ^1.10.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.regula.plugin.idv
+        pluginClass: FlutterIDVPlugin
+      ios:
+        pluginClass: FlutterIDVPlugin
