@@ -1,5 +1,3 @@
-import Foundation
-import UIKit
 import IDVSDK
 
 let didStartSessionEvent = "didStartSessionEvent"
@@ -11,7 +9,7 @@ func methodCall(_ method: String, _ callback: @escaping Callback) {
     switch (method) {
     case("setSessionRestoreMode"): IDV.shared.sessionRestoreMode = SessionRestoreMode(rawValue: args(0))!
     case("getCurrentSessionId"): callback(IDV.shared.currentSessionId)
-    case ("initialize"): initialize(callback)
+    case("initialize"): initialize(callback)
     case("deinitialize"): deinitialize(callback)
     case("configureWithToken"): configureWithToken(callback, args(0))
     case("configureWithCredentials"): configureWithCredentials(callback, args(0))
@@ -26,10 +24,12 @@ func methodCall(_ method: String, _ callback: @escaping Callback) {
 // MARK: - Implementation
 
 func initialize(_ callback: @escaping Callback) {
-    IDV.shared.initialize(config: IDVInitConfig(), completion: { result in
-        IDV.shared.delegate = delegate
-        callback(generateCompletion(result.isSuccess, result.failureOrNil))
-    })
+    DispatchQueue.main.async {
+        IDV.shared.initialize(config: IDVInitConfig(), completion: { result in
+            IDV.shared.delegate = delegate
+            callback(generateCompletion(result.isSuccess, result.failureOrNil))
+        })
+    }
 }
 
 func deinitialize(_ callback: @escaping Callback) {
@@ -63,11 +63,13 @@ func prepareWorkflow(_ callback: @escaping Callback, _ data: [String: Any?]) {
 }
 
 func startWorkflow(_ callback: @escaping Callback, _ data: [String: Any?]?) {
-    IDV.shared.startWorkflow(presenter: rootViewController()!,
-                             config: startWorkflowConfigFromJSON(input: data),
-                             completion: { result in
-        callback(generateCompletion(generateWorkflowResult(result.successOrNil), result.failureOrNil))
-    })
+    DispatchQueue.main.async {
+        IDV.shared.startWorkflow(presenter: rootViewController()!,
+                                 config: startWorkflowConfigFromJSON(input: data),
+                                 completion: { result in
+            callback(generateCompletion(generateWorkflowResult(result.successOrNil), result.failureOrNil))
+        })
+    }
 }
 
 func getWorkflows(_ callback: @escaping Callback) {

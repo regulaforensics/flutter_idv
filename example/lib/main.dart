@@ -9,6 +9,7 @@ const password = "password_placeholder";
 const tokenUrl = "token_placeholder";
 const apiKey = "api_key_placeholder";
 
+void main() => runApp(new MaterialApp(home: new MyApp()));
 var idv = IDV.instance;
 var selectedWorkflow = "";
 var workflowIds = [];
@@ -200,7 +201,10 @@ class MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     instance = this;
-    init();
+    // ensure UI is rendered(init block main thread for a long time)
+    Future.delayed(Duration(seconds: 1)).then((_) {
+      init();
+    });
   }
 
   @override
@@ -230,5 +234,3 @@ class MyApp extends StatefulWidget {
     return MyAppState();
   }
 }
-
-void main() => runApp(new MaterialApp(home: new MyApp()));

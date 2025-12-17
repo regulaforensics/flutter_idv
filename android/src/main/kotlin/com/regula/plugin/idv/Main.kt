@@ -99,7 +99,7 @@ fun prepareWorkflow(callback: Callback, data: JSONObject) = instance().prepareWo
 }
 
 fun startWorkflow(callback: Callback, data: JSONObject?) = instance().startWorkflow(
-    context,
+    activity,
     startWorkflowConfigFromJSON(data)
 ) {
     generateCompletion(

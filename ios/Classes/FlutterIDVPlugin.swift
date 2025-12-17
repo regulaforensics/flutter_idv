@@ -1,5 +1,4 @@
 import Flutter
-import UIKit
 
 let channelID = "flutter_idv"
 var eventSinks: [String: FlutterEventSink] = [:]
