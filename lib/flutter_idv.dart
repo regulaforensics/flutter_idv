@@ -16,6 +16,8 @@ part 'src/config/token_connection_config.dart';
 part 'src/config/api_key_connection_config.dart';
 part 'src/config/prepare_workflow_config.dart';
 part 'src/config/start_workflow_config.dart';
+part 'src/config/send_data_config.dart';
+part 'src/config/start_session_config.dart';
 
 part 'src/model/workflow.dart';
 part 'src/model/workflow_step.dart';
@@ -119,6 +121,26 @@ class IDV {
           .map((item) => Workflow.fromJson(item)!)
           .toList(),
     );
+  }
+
+  Future<(bool success, String? error)> sendData(
+    SendDataConfig config,
+  ) async {
+    var response = await _bridge.invokeMethod(
+      "sendData",
+      [config.toJson()],
+    );
+    return _completionFromJson(response) as (bool, String?);
+  }
+
+  Future<(String? sessionId, String? error)> startSession(
+    StartSessionConfig config,
+  ) async {
+    var response = await _bridge.invokeMethod(
+      "startSession",
+      [config.toJson()],
+    );
+    return _completionFromJson(response) as (String?, String?);
   }
 
   (T? success, String? error) _completionFromJson<T>(

@@ -17,6 +17,8 @@ func methodCall(_ method: String, _ callback: @escaping Callback) {
     case("prepareWorkflow"): prepareWorkflow(callback, args(0))
     case("startWorkflow"): startWorkflow(callback, argsNullable(0))
     case("getWorkflows"): getWorkflows(callback)
+    case("startSession"): startSession(callback, args(0))
+    case("sendData"): sendData(callback, args(0))
     default: break
     }
 }
@@ -76,6 +78,18 @@ func getWorkflows(_ callback: @escaping Callback) {
     IDV.shared.getWorkflows(completion: { result in
         callback(generateCompletion(result.successOrNil?.compactMap { generateWorkflow($0) },
                                     result.failureOrNil))
+    })
+}
+
+func startSession(_ callback: @escaping Callback, _ data: [String: Any?]) {
+    IDV.shared.startSession(with: startSessionConfigFromJSON(data), completion: { result in
+        callback(generateCompletion(result.successOrNil, result.failureOrNil))
+    })
+}
+
+func sendData(_ callback: @escaping Callback, _ data: [String: Any?]) {
+    IDV.shared.sendData(with: sendDataConfigFromJSON(data), completion: { result in
+        callback(generateCompletion(result.isSuccess, result.failureOrNil))
     })
 }
 
