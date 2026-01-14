@@ -25,6 +25,14 @@ class Tests: XCTestCase {
         compare(name: "startWorkflowConfig", fromJson: startWorkflowConfigFromJSON, generate: generateStartWorkflowConfig)
     }
     
+    func test_sendDataConfig() {
+        compare(name: "sendDataConfig", fromJson: sendDataConfigFromJSON, generate: generateSendDataConfig)
+    }
+    
+    func test_startSessionConfig() {
+        compare(name: "startSessionConfig", fromJson: startSessionConfigFromJSON, generate: generateStartSessionConfig)
+    }
+    
     // MARK: - Model
     
     func test_workflow() {

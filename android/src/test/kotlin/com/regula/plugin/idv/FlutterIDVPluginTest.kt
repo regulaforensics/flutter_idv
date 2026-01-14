@@ -21,6 +21,12 @@ class FlutterIDVPluginTest {
     @Test
     fun startWorkflowConfig() = compare("startWorkflowConfig", ::startWorkflowConfigFromJSON, ::generateStartWorkflowConfig)
 
+    @Test
+    fun startSessionConfig() = compare("startSessionConfig", ::startSessionConfigFromJSON, ::generateStartSessionConfig)
+
+    @Test
+    fun sendDataConfig() = compare("sendDataConfig", ::sendDataConfigFromJSON, ::generateSendDataConfig)
+
     // Model ------------------------------
 
     @Test

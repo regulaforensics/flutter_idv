@@ -5,6 +5,8 @@ package com.regula.plugin.idv
 import com.regula.idv.api.config.ApiKeyConnectionConfig
 import com.regula.idv.api.config.CredentialsConnectionConfig
 import com.regula.idv.api.config.PrepareWorkflowConfig
+import com.regula.idv.api.config.SendDataConfig
+import com.regula.idv.api.config.SessionConfig
 import com.regula.idv.api.config.StartWorkflowConfig
 import com.regula.idv.api.config.TokenConnectionConfig
 import com.regula.idv.api.models.WorkflowResult
@@ -80,6 +82,36 @@ fun startWorkflowConfigFromJSON(input: JSONObject?) = input?.let { json ->
 fun generateStartWorkflowConfig(input: StartWorkflowConfig?) = input?.let {
     mapOf(
         "locale" to it.locale,
+        "metadata" to it.metadata,
+    ).toJson()
+}
+
+fun sendDataConfigFromJSON(input: JSONObject?) = input?.let {
+    SendDataConfig(
+        it.getString("sessionId"),
+        it.getString("step"),
+        it.getJSONObject("data")
+    )
+}
+
+fun generateSendDataConfig(input: SendDataConfig?) = input?.let {
+    mapOf(
+        "sessionId" to it.sessionId,
+        "step" to it.step,
+        "data" to it.data,
+    ).toJson()
+}
+
+fun startSessionConfigFromJSON(input: JSONObject?) = input?.let {
+    SessionConfig(
+        it.getString("workflowId"),
+        it.getJSONObjectOrNull("metadata")
+    )
+}
+
+fun generateStartSessionConfig(input: SessionConfig?) = input?.let {
+    mapOf(
+        "workflowId" to it.workflowId,
         "metadata" to it.metadata,
     ).toJson()
 }

@@ -26,10 +26,6 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>To use camera</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>To use gallery</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -42,6 +38,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>To use camera</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To use gallery</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>To use location</string>
 	<key>NFCReaderUsageDescription</key>
 	<string>To use NFC</string>
 	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>

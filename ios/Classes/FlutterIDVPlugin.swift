@@ -1,5 +1,4 @@
 import Flutter
-import UIKit
 
 let channelID = "flutter_idv"
 var eventSinks: [String: FlutterEventSink] = [:]
@@ -63,10 +62,9 @@ class GenericStreamHandler: NSObject, FlutterStreamHandler {
 }
 
 let rootViewController: () -> UIViewController? = {
-    for window in UIApplication.shared.windows {
-        if window.isKeyWindow {
-            return window.rootViewController
-        }
-    }
-    return nil
+    return UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap { $0.windows }
+      .first { $0.isKeyWindow }?
+      .rootViewController
 }

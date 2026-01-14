@@ -31,6 +31,16 @@ void main() {
       startWorkflowConfig,
       StartWorkflowConfig.fromJson,
     );
+    compare(
+      'startSessionConfig',
+      startSessionConfig,
+      StartSessionConfig.fromJson,
+    );
+    compare(
+      'sendDataConfig',
+      sendDataConfig,
+      SendDataConfig.fromJson,
+    );
 
     compare('workflow', workflow, Workflow.fromJson);
     compare('workflowStep', workflowStep, WorkflowStep.fromJson);

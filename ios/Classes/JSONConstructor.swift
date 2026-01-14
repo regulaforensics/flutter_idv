@@ -1,5 +1,3 @@
-import Foundation
-import UIKit
 import IDVSDK
 import IDVModule
 
@@ -83,6 +81,29 @@ public func generateStartWorkflowConfig(_ data: StartWorkflowConfig) -> [String:
     ]
 }
 
+public func sendDataConfigFromJSON(_ data: [String: Any?]) -> SendDataConfig {
+    return SendDataConfig(sessionId: data["sessionId"] as! String, step: data["step"] as! String, data: data["data"] as! [String: Any])
+}
+
+public func generateSendDataConfig(_ data: SendDataConfig) -> [String: Any?] {
+    return [
+        "sessionId": data.sessionId,
+        "step": data.step,
+        "data": data.data
+    ]
+}
+
+public func startSessionConfigFromJSON(_ data: [String: Any?]) -> StartSessionConfig {
+    return StartSessionConfig(workflowId: data["workflowId"] as! String, metadata: data["metadata"] as? [String : Any])
+}
+
+public func generateStartSessionConfig(_ data: StartSessionConfig) -> [String: Any?] {
+    return [
+        "workflowId": data.workflowId,
+        "metadata": data.metadata
+    ]
+}
+
 // MARK: - Model
 
 public func workflowFromJSON(_ input: [String: Any?]?) -> Workflow? {
@@ -90,6 +111,7 @@ public func workflowFromJSON(_ input: [String: Any?]?) -> Workflow? {
     it["client"] = [String: Any]()
     it["steps"] = [WorkflowStep]()
     it["_description"] = it["description"]
+    it["trackLocation"] = false
     return try! Workflow(from: it.toDecoder())
 }
 

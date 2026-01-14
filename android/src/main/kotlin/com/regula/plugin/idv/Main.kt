@@ -29,6 +29,8 @@ fun methodCall(method: String, callback: Callback): Any = when (method) {
     "prepareWorkflow" -> prepareWorkflow(callback, args(0))
     "startWorkflow" -> startWorkflow(callback, argsNullable(0))
     "getWorkflows" -> getWorkflows(callback)
+    "startSession" -> startSession(args(0), callback)
+    "sendData" -> sendData(args(0), callback)
     else -> Unit
 }
 
@@ -99,7 +101,7 @@ fun prepareWorkflow(callback: Callback, data: JSONObject) = instance().prepareWo
 }
 
 fun startWorkflow(callback: Callback, data: JSONObject?) = instance().startWorkflow(
-    context,
+    activity,
     startWorkflowConfigFromJSON(data)
 ) {
     generateCompletion(
@@ -111,6 +113,24 @@ fun startWorkflow(callback: Callback, data: JSONObject?) = instance().startWorkf
 fun getWorkflows(callback: Callback) = instance().getWorkflows {
     generateCompletion(
         it.getOrNull().toJsonNullable(::generateWorkflow),
+        it.exceptionOrNull() as BaseException?
+    ).send(callback)
+}
+
+fun startSession(config: JSONObject, callback: Callback) = instance().startSession(
+    startSessionConfigFromJSON(config)!!
+) {
+    generateCompletion(
+        it.getOrNull(),
+        it.exceptionOrNull() as BaseException?
+    ).send(callback)
+}
+
+fun sendData(config: JSONObject, callback: Callback) = instance().sendData(
+    sendDataConfigFromJSON(config)!!
+) {
+    generateCompletion(
+        it.isSuccess,
         it.exceptionOrNull() as BaseException?
     ).send(callback)
 }

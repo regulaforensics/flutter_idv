@@ -1,7 +1,3 @@
-import Foundation
-import UIKit
-import IDVSDK
-
 public typealias Callback = (Any?) -> Void
 
 extension Any? {
