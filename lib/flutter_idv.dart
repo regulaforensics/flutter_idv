@@ -123,16 +123,6 @@ class IDV {
     );
   }
 
-  Future<(bool success, String? error)> sendData(
-    SendDataConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "sendData",
-      [config.toJson()],
-    );
-    return _completionFromJson(response) as (bool, String?);
-  }
-
   Future<(String? sessionId, String? error)> startSession(
     StartSessionConfig config,
   ) async {
@@ -141,6 +131,16 @@ class IDV {
       [config.toJson()],
     );
     return _completionFromJson(response) as (String?, String?);
+  }
+
+  Future<(bool success, String? error)> sendData(
+    SendDataConfig config,
+  ) async {
+    var response = await _bridge.invokeMethod(
+      "sendData",
+      [config.toJson()],
+    );
+    return _completionFromJson(response) as (bool, String?);
   }
 
   (T? success, String? error) _completionFromJson<T>(
