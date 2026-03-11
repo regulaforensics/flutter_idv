@@ -6,7 +6,7 @@ let didStartRestoreSessionEvent = "didStartRestoreSessionEvent"
 let didContinueRemoteSessionEvent = "didContinueRemoteSessionEvent"
 
 func methodCall(_ method: String, _ callback: @escaping Callback) {
-    switch (method) {
+    switch method {
     case("setSessionRestoreMode"): IDV.shared.sessionRestoreMode = SessionRestoreMode(rawValue: args(0))!
     case("getCurrentSessionId"): callback(IDV.shared.currentSessionId)
     case("initialize"): initialize(callback)
