@@ -1,5 +1,15 @@
 public typealias Callback = (Any?) -> Void
 
+var args: [Any?] = []
+func args<T>(_ index: Int) -> T {
+    return args[index] as! T
+}
+
+func argsNullable<T>(_ index: Int) -> T? {
+    if args[index] is NSNull { return nil }
+    return args[index] as! T?
+}
+
 extension Any? {
     func toSendable() -> Any {
         guard let self else { return NSNull() }

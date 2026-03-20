@@ -1,29 +1,8 @@
 import Flutter
 
-let channelID = "flutter_idv"
-var eventSinks: [String: FlutterEventSink] = [:]
-
-private var args: [Any?] = []
-
-func sendEvent(_ event: String, _ data: Any? = nil) {
-    DispatchQueue.main.async {
-        if let sink = eventSinks[event] {
-            sink(data.toSendable())
-        }
-    }
-}
-
-func args<T>(_ index: Int) -> T {
-    return args[index] as! T
-}
-
-func argsNullable<T>(_ index: Int) -> T? {
-    if (args[index] is NSNull) { return nil }
-    return args[index] as! T?
-}
-
 public class FlutterIDVPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
+        let channelID = "flutter_idv"
         func setupEventChannel(_ eventId: String) {
             let channel = FlutterEventChannel(name: "\(channelID)/event/\(eventId)", binaryMessenger: registrar.messenger())
             channel.setStreamHandler(GenericStreamHandler(eventId))
@@ -58,6 +37,15 @@ class GenericStreamHandler: NSObject, FlutterStreamHandler {
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
         eventSinks[eventId] = nil
         return nil
+    }
+}
+
+var eventSinks: [String: FlutterEventSink] = [:]
+func sendEvent(_ event: String, _ data: Any? = nil) {
+    DispatchQueue.main.async {
+        if let sink = eventSinks[event] {
+            sink(data.toSendable())
+        }
     }
 }
 

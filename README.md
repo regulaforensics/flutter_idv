@@ -21,7 +21,7 @@ android {
 ```
 
 ## Documentation
-* [Documentation](https://docs.regulaforensics.com/develop/idv-sdk/mobile)
+* [Documentation](https://docs.regulaforensics.com/develop/idv/integration/installation/mobile/flutter/)
 * [API Reference](https://pub.dev/documentation/flutter_idv)
 
 ## Support
