@@ -36,15 +36,24 @@ class IDV {
     void Function()? didEndSession,
     void Function()? didStartRestoreSession,
     void Function()? didContinueRemoteSession,
+    IdvLogEventCompletion? didReceiveLogEvent,
   }) {
     _setDidStartSessionCompletion(didStartSession);
     _setDidEndSessionCompletion(didEndSession);
     _setDidStartRestoreSessionCompletion(didStartRestoreSession);
     _setDidContinueRemoteSessionCompletion(didContinueRemoteSession);
+    _setDidReceiveLogEventCompletion(didReceiveLogEvent);
   }
 
   set sessionRestoreMode(SessionRestoreMode val) {
     _bridge.invokeMethod("setSessionRestoreMode", [val.value]);
+  }
+
+  /// Default: empty set.
+  set logLevel(Set<IdvLogLevel> val) {
+    _bridge.invokeMethod("setLogLevel", [
+      val.toList().map((v) => v.value).toList(),
+    ]);
   }
 
   Future<String?> getCurrentSessionId() async {
@@ -167,6 +176,33 @@ enum SessionRestoreMode {
     if (i == null) return null;
     try {
       return SessionRestoreMode.values.firstWhere((x) => x.value == i);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+typedef IdvLogEventCompletion = void Function(
+  IdvLogLevel level,
+  String message,
+);
+
+enum IdvLogLevel {
+  DEBUG(0),
+
+  INFO(1),
+
+  WARNING(2),
+
+  ERROR(3);
+
+  const IdvLogLevel(this.value);
+  final int value;
+
+  static IdvLogLevel? getByValue(int? i) {
+    if (i == null) return null;
+    try {
+      return IdvLogLevel.values.firstWhere((x) => x.value == i);
     } catch (_) {
       return null;
     }
