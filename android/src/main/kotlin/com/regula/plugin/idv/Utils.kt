@@ -31,6 +31,13 @@ fun Map<*, *>.toJson(): JSONObject {
     return result
 }
 
+fun <T> JSONArray.toList() = this.let {
+    val result = mutableListOf<T>()
+    @Suppress("UNCHECKED_CAST")
+    for (i in 0 until length()) result.add(get(i) as T)
+    result
+}
+
 fun Any?.toSendable(): Any? = this?.let {
     if (it is JSONObject || it is JSONArray) it.toString()
     else it

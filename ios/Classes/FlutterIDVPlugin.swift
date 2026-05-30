@@ -11,6 +11,7 @@ public class FlutterIDVPlugin: NSObject, FlutterPlugin {
         setupEventChannel(didEndSessionEvent);
         setupEventChannel(didStartRestoreSessionEvent);
         setupEventChannel(didContinueRemoteSessionEvent);
+        setupEventChannel(didReceiveLogEventEvent);
         
         let channel = FlutterMethodChannel(name: "\(channelID)/method", binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(FlutterIDVPlugin(), channel: channel)

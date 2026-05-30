@@ -33,3 +33,17 @@ void _setDidContinueRemoteSessionCompletion(void Function()? completion) {
     (msg) => _didContinueRemoteSessionCompletion?.call(),
   );
 }
+
+late IdvLogEventCompletion? _didReceiveLogEventCompletion;
+void _setDidReceiveLogEventCompletion(IdvLogEventCompletion? completion) {
+  _didReceiveLogEventCompletion = completion;
+  _eventChannel(
+    'didReceiveLogEventEvent',
+    (msg) {
+      var jsonObject = json.decode(msg);
+      var level = IdvLogLevel.getByValue(jsonObject["level"])!;
+      var message = jsonObject["message"];
+      _didReceiveLogEventCompletion?.call(level, message);
+    },
+  );
+}

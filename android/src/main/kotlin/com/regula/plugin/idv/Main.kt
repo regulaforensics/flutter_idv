@@ -6,12 +6,15 @@ import com.regula.idv.api.enums.SessionRestoreMode
 import com.regula.idv.api.listeners.IdvSdkListener
 import com.regula.idv.module.BaseException
 import com.regula.idv.module.IModule
+import com.regula.idv.module.enums.IdvLogLevel
+import org.json.JSONArray
 import org.json.JSONObject
 
 const val didStartSessionEvent = "didStartSessionEvent"
 const val didEndSessionEvent = "didEndSessionEvent"
 const val didStartRestoreSessionEvent = "didStartRestoreSessionEvent"
 const val didContinueRemoteSessionEvent = "didContinueRemoteSessionEvent"
+const val didReceiveLogEventEvent = "didReceiveLogEventEvent"
 
 val allModules = listOf(
     "com.regula.idv.docreader.DocReaderModule",
@@ -20,6 +23,7 @@ val allModules = listOf(
 
 fun methodCall(method: String, callback: Callback): Any = when (method) {
     "setSessionRestoreMode" -> instance().sessionRestoreMode = SessionRestoreMode.entries[args(0)]
+    "setLogLevel" -> instance().logLevel = HashSet(args<JSONArray>(0).toList<Int>().map { IdvLogLevel.entries[it] })
     "getCurrentSessionId" -> callback(instance().currentSessionId())
     "initialize" -> initialize(callback)
     "deinitialize" -> deinitialize(callback)
@@ -141,4 +145,8 @@ var listener = object : IdvSdkListener {
     override fun didEndSession() = sendEvent(didEndSessionEvent)
     override fun didStartRestoreSession() = sendEvent(didStartRestoreSessionEvent)
     override fun didContinueRemoteSession() = sendEvent(didContinueRemoteSessionEvent)
+    override fun didReceiveLogEvent(level: IdvLogLevel, message: String) = sendEvent(didReceiveLogEventEvent, mapOf(
+        "level" to level.ordinal,
+        "message" to message,
+    ).toJson())
 }
