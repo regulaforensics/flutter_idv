@@ -14,8 +14,8 @@ dependencies:
     sdk: flutter
   flutter_idv:
     path: ../
-  flutter_idv_module_document_reader: 9.5.163-nightly
-  flutter_idv_module_face: 9.5.164-nightly
+  flutter_idv_module_document_reader: 9.5.165-nightly
+  flutter_idv_module_face: 9.5.166-nightly
   flutter_document_reader_core_fullauthrfid: 9.6.2546-nightly
   flutter_face_core_basic: 8.3.544-rc
   cupertino_icons: ^1.0.8
