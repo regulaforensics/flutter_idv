@@ -1,0 +1,29 @@
+name: flutter_idv_example
+description: Demonstrates how to use the flutter_idv plugin.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: '>=3.1.5 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  path_provider: ^2.1.5
+  image_picker: ^1.1.2
+  flutter:
+    sdk: flutter
+  flutter_idv:
+    path: ../
+  flutter_idv_module_document_reader: 9.6.193-rc
+  flutter_idv_module_face: 9.6.194-rc
+  flutter_document_reader_core_fullauthrfid: 9.7.2618-nightly
+  flutter_face_core_basic: 8.3.569-nightly
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
