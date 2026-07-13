@@ -27,6 +27,9 @@ class FlutterIDVPluginTest {
     @Test
     fun sendDataConfig() = compare("sendDataConfig", ::sendDataConfigFromJSON, ::generateSendDataConfig)
 
+    @Test
+    fun loginConfig() = compare("loginConfig", ::loginConfigFromJSON, ::generateLoginConfig)
+
     // Model ------------------------------
 
     @Test

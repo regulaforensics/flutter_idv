@@ -4,23 +4,17 @@ var credentialsConnectionConfig = {
   "password": "test2",
   "httpTimeoutMs": 1,
 };
-var tokenConnectionConfig = {
-  "url": "test1",
-};
+var tokenConnectionConfig = {"url": "test1"};
 var apiKeyConnectionConfig = {
   "baseUrl": "test1",
   "apiKey": "test2",
   "ttl": 1,
   "httpTimeoutMs": 2,
 };
-var prepareWorkflowConfig = {
-  "workflowId": "test1",
-};
+var prepareWorkflowConfig = {"workflowId": "test1"};
 var startWorkflowConfig = {
   "locale": "test1",
-  "metadata": {
-    "test2": "test3",
-  },
+  "metadata": {"test2": "test3"},
 };
 var startSessionConfig = {
   "workflowId": "test1",
@@ -31,6 +25,13 @@ var sendDataConfig = {
   "step": "test2",
   "data": {"test1": 0, "test2": "test3", "test4": true},
 };
+var loginConfig = {
+  "applicationId": "test1",
+  "baseUrl": "test2",
+  "locale": "test3",
+  "metadata": {"test1": 0, "test2": "test3", "test4": true},
+  "httpTimeoutMs": 0,
+};
 
 var workflow = {
   "id": "test1",
@@ -39,11 +40,5 @@ var workflow = {
   "description": "test4",
   "defaultLocale": "test5",
 };
-var workflowStep = {
-  "id": "test1",
-  "name": "test2",
-};
-var workflowResult = {
-  "sessionId": "test1",
-  "finalStep": workflowStep,
-};
+var workflowStep = {"id": "test1", "name": "test2"};
+var workflowResult = {"sessionId": "test1", "finalStep": workflowStep};

@@ -3,5 +3,6 @@ Map<String, List<String>?> nullableMap = {
   "apiKeyConnectionConfig": ["ttl", "httpTimeoutMs"],
   "startWorkflowConfig!": [],
   "startSessionConfig": ["metadata"],
+  "loginConfig": ["metadata", "httpTimeoutMs"],
   "workflow": ["defaultLocale"],
 };

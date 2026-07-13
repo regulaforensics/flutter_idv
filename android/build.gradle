@@ -3,7 +3,7 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven {
-            url "https://maven.regulaforensics.com/RegulaDocumentReader/Nightly"
+            url "https://maven.regulaforensics.com/RegulaDocumentReader"
         }
     }
 }
@@ -32,7 +32,7 @@ android {
     }
 
     dependencies {
-        implementation('com.regula.idv:api:3.6.308') {
+        implementation('com.regula.idv:api:3.8.314') {
             transitive = true
         }
 
