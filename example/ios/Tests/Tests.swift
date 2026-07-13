@@ -33,6 +33,10 @@ class Tests: XCTestCase {
         compare(name: "startSessionConfig", fromJson: startSessionConfigFromJSON, generate: generateStartSessionConfig)
     }
     
+    func test_loginConfig() {
+        compare(name: "loginConfig", fromJson: loginConfigFromJSON, generate: generateLoginConfig)
+    }
+    
     // MARK: - Model
     
     func test_workflow() {

@@ -104,6 +104,22 @@ public func generateStartSessionConfig(_ data: StartSessionConfig) -> [String: A
     ]
 }
 
+public func loginConfigFromJSON(_ data: [String: Any?]) -> LoginConfig {
+    let result = LoginConfig(applicationId: data["applicationId"] as! String, baseURL: data["baseUrl"] as! String, locale: data["locale"] as? String, metadata: data["metadata"] as? [String : Any])
+    result.httpTimeoutMs = data["httpTimeoutMs"] as? NSNumber
+    return result
+}
+
+public func generateLoginConfig(_ data: LoginConfig) -> [String: Any?] {
+    return [
+        "applicationId": data.applicationId,
+        "baseUrl": data.baseURL,
+        "locale": data.locale,
+        "metadata": data.metadata,
+        "httpTimeoutMs": data.httpTimeoutMs,
+    ]
+}
+
 // MARK: - Model
 
 public func workflowFromJSON(_ input: [String: Any?]?) -> Workflow? {

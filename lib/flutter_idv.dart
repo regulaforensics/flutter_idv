@@ -18,6 +18,7 @@ part 'src/config/prepare_workflow_config.dart';
 part 'src/config/start_workflow_config.dart';
 part 'src/config/send_data_config.dart';
 part 'src/config/start_session_config.dart';
+part 'src/config/login_config.dart';
 
 part 'src/model/workflow.dart';
 part 'src/model/workflow_step.dart';
@@ -147,6 +148,16 @@ class IDV {
   ) async {
     var response = await _bridge.invokeMethod(
       "sendData",
+      [config.toJson()],
+    );
+    return _completionFromJson(response) as (bool, String?);
+  }
+
+  Future<(bool success, String? error)> startLogin(
+    LoginConfig config,
+  ) async {
+    var response = await _bridge.invokeMethod(
+      "startLogin",
       [config.toJson()],
     );
     return _completionFromJson(response) as (bool, String?);

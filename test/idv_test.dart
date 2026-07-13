@@ -41,6 +41,11 @@ void main() {
       sendDataConfig,
       SendDataConfig.fromJson,
     );
+    compare(
+      'loginConfig',
+      loginConfig,
+      LoginConfig.fromJson,
+    );
 
     compare('workflow', workflow, Workflow.fromJson);
     compare('workflowStep', workflowStep, WorkflowStep.fromJson);

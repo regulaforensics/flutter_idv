@@ -21,6 +21,7 @@ func methodCall(_ method: String, _ callback: @escaping Callback) {
     case("getWorkflows"): getWorkflows(callback)
     case("startSession"): startSession(callback, args(0))
     case("sendData"): sendData(callback, args(0))
+    case("startLogin"): startLogin(callback, args(0))
     default: break
     }
 }
@@ -93,6 +94,16 @@ func sendData(_ callback: @escaping Callback, _ data: [String: Any?]) {
     IDV.shared.sendData(with: sendDataConfigFromJSON(data), completion: { result in
         callback(generateCompletion(result.isSuccess, result.failureOrNil))
     })
+}
+
+func startLogin(_ callback: @escaping Callback, _ data: [String: Any?]) {
+    DispatchQueue.main.async {
+        IDV.shared.startLogin(presenter: rootViewController()!,
+                                 config: loginConfigFromJSON(data),
+                                 completion: { result in
+            callback(generateCompletion(result.successOrNil, result.failureOrNil))
+        })
+    }
 }
 
 
