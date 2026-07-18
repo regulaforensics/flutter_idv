@@ -32,7 +32,7 @@ android {
     }
 
     dependencies {
-        implementation('com.regula.idv:api:3.9.320') {
+        implementation('com.regula.idv:api:3.9.323') {
             transitive = true
         }
 
