@@ -7,19 +7,13 @@ class WorkflowResult {
   WorkflowStep get finalStep => _finalStep;
   WorkflowStep _finalStep;
 
-  WorkflowResult._(
-    this._sessionId,
-    this._finalStep,
-  );
+  WorkflowResult._(this._sessionId, this._finalStep);
 
   @visibleForTesting
   static WorkflowResult? fromJson(json) {
     if (json == null) return null;
 
-    var result = WorkflowResult._(
-      json["sessionId"],
-      WorkflowStep.fromJson(json["finalStep"])!,
-    );
+    var result = WorkflowResult._(json["sessionId"], WorkflowStep.fromJson(json["finalStep"])!);
 
     return result;
   }

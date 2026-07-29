@@ -5,11 +5,8 @@ class SendDataConfig {
   String _step;
   Map<String, dynamic> _data;
 
-  SendDataConfig(
-    String sessionId,
-    String step,
-    Map<String, dynamic> data,
-  )   : _sessionId = sessionId,
+  SendDataConfig(String sessionId, String step, Map<String, dynamic> data)
+      : _sessionId = sessionId,
         _step = step,
         _data = data;
 

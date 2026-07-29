@@ -4,10 +4,8 @@ class StartWorkflowConfig {
   String? _locale;
   Map<String, dynamic>? _metadata;
 
-  StartWorkflowConfig({
-    String? locale,
-    Map<String, dynamic>? metadata,
-  })  : _locale = locale,
+  StartWorkflowConfig({String? locale, Map<String, dynamic>? metadata})
+      : _locale = locale,
         _metadata = metadata;
 
   @visibleForTesting

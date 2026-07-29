@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 
 const loginType = Configuration.credentials;
 const baseUrl = "https://idv.regula.app";
-const username = "username_placeholder";
-const password = "password_placeholder";
+const username = "pavel.masiuk";
+const password = "jidroz-5cuDqo-dopkox";
 const tokenUrl = "token_placeholder";
 const apiKey = "api_key_placeholder";
 
@@ -36,23 +36,20 @@ void init() async {
 }
 
 Future<bool> configureWithCredentials() async {
-  var (success, error) = await idv.configureWithCredentials(
-      CredentialsConnectionConfig(baseUrl, username, password));
+  var (success, error) = await idv.configureWithCredentials(CredentialsConnectionConfig(baseUrl, username, password));
   handleException(error, tag: "configureWithCredentials");
   return success;
 }
 
 Future<bool> configureWithToken() async {
-  var (wfIds, error) =
-      await idv.configureWithToken(TokenConnectionConfig(tokenUrl));
+  var (wfIds, error) = await idv.configureWithToken(TokenConnectionConfig(tokenUrl));
   if (handleException(error, tag: "configureWithToken")) return false;
   workflowIds = wfIds!;
   return true;
 }
 
 Future<bool> configureApiKey() async {
-  var (success, error) =
-      await idv.configureWithApiKey(ApiKeyConnectionConfig(baseUrl, apiKey));
+  var (success, error) = await idv.configureWithApiKey(ApiKeyConnectionConfig(baseUrl, apiKey));
   handleException(error, tag: "configureWithApiKey");
   return success;
 }
@@ -61,8 +58,7 @@ void startWorkflow() async {
   if (selectedWorkflow.isEmpty) return;
   setStatus("Preparing Workflow...");
 
-  var (_, prepareError) =
-      await idv.prepareWorkflow(PrepareWorkflowConfig(selectedWorkflow));
+  var (_, prepareError) = await idv.prepareWorkflow(PrepareWorkflowConfig(selectedWorkflow));
   if (handleException(prepareError, tag: "prepareWorkflow")) return;
 
   var (result, error) = await idv.startWorkflow();
@@ -110,14 +106,8 @@ void setWorkflows(List<Workflow> data) {
 }
 
 List<Widget> customHeader() => [
-      header(
-        [label(status)],
-      ),
-      header(
-        top: false,
-        visible: description != null,
-        [label(description ?? "", small: true)],
-      )
+      header([label(status)]),
+      header(top: false, visible: description != null, [label(description ?? "", small: true)])
     ];
 
 List<Widget> ui() {
@@ -128,71 +118,47 @@ List<Widget> ui() {
         padding: EdgeInsets.only(left: 40),
         child: RadioGroup(
           groupValue: selectedWorkflow,
-          onChanged: (value) => MyAppState.update(
-            () => selectedWorkflow = value!,
-          ),
+          onChanged: (value) => MyAppState.update(() => selectedWorkflow = value!),
           child: ListView.builder(
             itemCount: workflows.length,
             itemBuilder: (context, int index) => ListTile(
               leading: Radio(value: workflows[index].id),
               title: Text(workflows[index].name),
-              onTap: () => MyAppState.update(
-                () => selectedWorkflow = workflows[index].id,
-              ),
+              onTap: () => MyAppState.update(() => selectedWorkflow = workflows[index].id),
             ),
           ),
         ),
       ),
     ),
-    Row(children: [
-      Expanded(
-        child: button("Start Workflow", startWorkflow),
-      )
-    ]),
+    Row(children: [Expanded(child: button("Start Workflow", startWorkflow))]),
   ];
 }
 
 Widget button(String text, VoidCallback onPressed) => Padding(
     padding: EdgeInsets.all(5),
-    child: SizedBox(
-      height: 40,
-      child: FilledButton(onPressed: onPressed, child: Text(text)),
-    ));
+    child: SizedBox(height: 40, child: FilledButton(onPressed: onPressed, child: Text(text))));
 
 Widget label(String text, {bool small = false}) => Padding(
     padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
     child: Text(
       text,
       textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: small ? 15 : 18,
-        fontWeight: FontWeight.w600,
-      ),
+      style: TextStyle(fontSize: small ? 15 : 18, fontWeight: FontWeight.w600),
     ));
 
-Widget header(
-  List<Widget> children, {
-  bool top = true,
-  visible = true,
-}) =>
-    Visibility(
-      visible: visible,
-      child: Container(
-        padding: EdgeInsets.only(top: top ? 70 : 13),
-        color: Colors.black.withValues(alpha: 0.03),
-        child: Column(children: [
-          ...children,
-          Container(
-            margin: EdgeInsets.only(top: 13),
-            child: Divider(
-              height: 1,
-              thickness: 1,
-              color: Color.fromRGBO(0, 0, 0, 0.075),
-            ),
-          ),
-        ]),
-      ),
-    );
+Widget header(List<Widget> children, {bool top = true, visible = true}) => Visibility(
+    visible: visible,
+    child: Container(
+      padding: EdgeInsets.only(top: top ? 70 : 13),
+      color: Colors.black.withValues(alpha: 0.03),
+      child: Column(children: [
+        ...children,
+        Container(
+          margin: EdgeInsets.only(top: 13),
+          child: Divider(height: 1, thickness: 1, color: Color.fromRGBO(0, 0, 0, 0.075)),
+        ),
+      ]),
+    ));
 
 // --------------------------------------------------------------------------------------------------------------------
 

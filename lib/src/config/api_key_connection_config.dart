@@ -6,12 +6,8 @@ class ApiKeyConnectionConfig {
   int? _ttl;
   int? _httpTimeoutMs;
 
-  ApiKeyConnectionConfig(
-    String baseUrl,
-    String apiKey, {
-    int? ttl,
-    int? httpTimeoutMs,
-  })  : _baseUrl = baseUrl,
+  ApiKeyConnectionConfig(String baseUrl, String apiKey, {int? ttl, int? httpTimeoutMs})
+      : _baseUrl = baseUrl,
         _apiKey = apiKey,
         _ttl = ttl,
         _httpTimeoutMs = httpTimeoutMs;

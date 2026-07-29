@@ -52,9 +52,7 @@ class IDV {
 
   /// Default: empty set.
   set logLevel(Set<IdvLogLevel> val) {
-    _bridge.invokeMethod("setLogLevel", [
-      val.toList().map((v) => v.value).toList(),
-    ]);
+    _bridge.invokeMethod("setLogLevel", [val.toList().map((v) => v.value).toList()]);
   }
 
   Future<String?> getCurrentSessionId() async {
@@ -71,55 +69,28 @@ class IDV {
     return _completionFromJson(response) as (bool, String?);
   }
 
-  Future<(List<String>? workflowIds, String? error)> configureWithToken(
-    TokenConnectionConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "configureWithToken",
-      [config.toJson()],
-    );
-    return _completionFromJson(
-      response,
-      fromJson: (json) => (json as List<dynamic>?)?.cast<String>(),
-    );
+  Future<(List<String>? workflowIds, String? error)> configureWithToken(TokenConnectionConfig config) async {
+    var response = await _bridge.invokeMethod("configureWithToken", [config.toJson()]);
+    return _completionFromJson(response, fromJson: (json) => (json as List<dynamic>?)?.cast<String>());
   }
 
-  Future<(bool success, String? error)> configureWithCredentials(
-    CredentialsConnectionConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "configureWithCredentials",
-      [config.toJson()],
-    );
+  Future<(bool success, String? error)> configureWithCredentials(CredentialsConnectionConfig config) async {
+    var response = await _bridge.invokeMethod("configureWithCredentials", [config.toJson()]);
     return _completionFromJson(response) as (bool, String?);
   }
 
-  Future<(bool success, String? error)> configureWithApiKey(
-      ApiKeyConnectionConfig config) async {
-    var response = await _bridge.invokeMethod(
-      "configureWithApiKey",
-      [config.toJson()],
-    );
+  Future<(bool success, String? error)> configureWithApiKey(ApiKeyConnectionConfig config) async {
+    var response = await _bridge.invokeMethod("configureWithApiKey", [config.toJson()]);
     return _completionFromJson(response) as (bool, String?);
   }
 
-  Future<(Workflow? workflow, String? error)> prepareWorkflow(
-    PrepareWorkflowConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "prepareWorkflow",
-      [config.toJson()],
-    );
+  Future<(Workflow? workflow, String? error)> prepareWorkflow(PrepareWorkflowConfig config) async {
+    var response = await _bridge.invokeMethod("prepareWorkflow", [config.toJson()]);
     return _completionFromJson(response, fromJson: Workflow.fromJson);
   }
 
-  Future<(WorkflowResult? result, String? error)> startWorkflow({
-    StartWorkflowConfig? config,
-  }) async {
-    var response = await _bridge.invokeMethod(
-      "startWorkflow",
-      [config?.toJson()],
-    );
+  Future<(WorkflowResult? result, String? error)> startWorkflow({StartWorkflowConfig? config}) async {
+    var response = await _bridge.invokeMethod("startWorkflow", [config?.toJson()]);
     return _completionFromJson(response, fromJson: WorkflowResult.fromJson);
   }
 
@@ -127,46 +98,26 @@ class IDV {
     var response = await _bridge.invokeMethod("getWorkflows", []);
     return _completionFromJson(
       response,
-      fromJson: (json) => (json as List<dynamic>)
-          .map((item) => Workflow.fromJson(item)!)
-          .toList(),
+      fromJson: (json) => (json as List<dynamic>).map((item) => Workflow.fromJson(item)!).toList(),
     );
   }
 
-  Future<(String? sessionId, String? error)> startSession(
-    StartSessionConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "startSession",
-      [config.toJson()],
-    );
+  Future<(String? sessionId, String? error)> startSession(StartSessionConfig config) async {
+    var response = await _bridge.invokeMethod("startSession", [config.toJson()]);
     return _completionFromJson(response) as (String?, String?);
   }
 
-  Future<(bool success, String? error)> sendData(
-    SendDataConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "sendData",
-      [config.toJson()],
-    );
+  Future<(bool success, String? error)> sendData(SendDataConfig config) async {
+    var response = await _bridge.invokeMethod("sendData", [config.toJson()]);
     return _completionFromJson(response) as (bool, String?);
   }
 
-  Future<(bool success, String? error)> startLogin(
-    LoginConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "startLogin",
-      [config.toJson()],
-    );
+  Future<(bool success, String? error)> startLogin(LoginConfig config) async {
+    var response = await _bridge.invokeMethod("startLogin", [config.toJson()]);
     return _completionFromJson(response) as (bool, String?);
   }
 
-  (T? success, String? error) _completionFromJson<T>(
-    String jsonString, {
-    T? Function(dynamic)? fromJson,
-  }) {
+  (T? success, String? error) _completionFromJson<T>(String jsonString, {T? Function(dynamic)? fromJson}) {
     var json = _decode(jsonString);
     var success = json["success"];
     var error = json["error"];

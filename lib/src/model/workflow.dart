@@ -16,13 +16,7 @@ class Workflow {
   String? get defaultLocale => _defaultLocale;
   String? _defaultLocale;
 
-  Workflow._(
-    this._id,
-    this._name,
-    this._description,
-    this._version,
-    this._defaultLocale,
-  );
+  Workflow._(this._id, this._name, this._description, this._version, this._defaultLocale);
 
   @visibleForTesting
   static Workflow? fromJson(json) {

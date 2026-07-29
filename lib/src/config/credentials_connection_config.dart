@@ -6,12 +6,8 @@ class CredentialsConnectionConfig {
   String _password;
   int? _httpTimeoutMs;
 
-  CredentialsConnectionConfig(
-    String baseUrl,
-    String userName,
-    String password, {
-    int? httpTimeoutMs,
-  })  : _baseUrl = baseUrl,
+  CredentialsConnectionConfig(String baseUrl, String userName, String password, {int? httpTimeoutMs})
+      : _baseUrl = baseUrl,
         _userName = userName,
         _password = password,
         _httpTimeoutMs = httpTimeoutMs;
