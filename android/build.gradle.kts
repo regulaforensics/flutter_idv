@@ -63,7 +63,7 @@ extensions.configure<KotlinAndroidProjectExtension> {
 }
 
 dependencies {
-    implementation("com.regula.idv:api:3.9.361") {
+    implementation("com.regula.idv:api:3.9.363") {
         isTransitive = true
     }
 
