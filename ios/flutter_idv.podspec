@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_idv'
-  s.version          = '3.9.291-nightly'
+  s.version          = '4.0.292-nightly'
   s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
 A new flutter plugin project.
@@ -12,6 +12,6 @@ A new flutter plugin project.
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
   s.platform = :ios, '14.0'
-  s.dependency 'IDVSDKNightly', '3.9.1992'
+  s.dependency 'IDVSDKNightly', '4.0.1993'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
 end
