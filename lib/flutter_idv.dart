@@ -18,6 +18,7 @@ part 'src/config/prepare_workflow_config.dart';
 part 'src/config/start_workflow_config.dart';
 part 'src/config/send_data_config.dart';
 part 'src/config/start_session_config.dart';
+part 'src/config/login_config.dart';
 
 part 'src/model/workflow.dart';
 part 'src/model/workflow_step.dart';
@@ -36,15 +37,22 @@ class IDV {
     void Function()? didEndSession,
     void Function()? didStartRestoreSession,
     void Function()? didContinueRemoteSession,
+    IdvLogEventCompletion? didReceiveLogEvent,
   }) {
     _setDidStartSessionCompletion(didStartSession);
     _setDidEndSessionCompletion(didEndSession);
     _setDidStartRestoreSessionCompletion(didStartRestoreSession);
     _setDidContinueRemoteSessionCompletion(didContinueRemoteSession);
+    _setDidReceiveLogEventCompletion(didReceiveLogEvent);
   }
 
   set sessionRestoreMode(SessionRestoreMode val) {
     _bridge.invokeMethod("setSessionRestoreMode", [val.value]);
+  }
+
+  /// Default: empty set.
+  set logLevel(Set<IdvLogLevel> val) {
+    _bridge.invokeMethod("setLogLevel", [val.toList().map((v) => v.value).toList()]);
   }
 
   Future<String?> getCurrentSessionId() async {
@@ -61,55 +69,28 @@ class IDV {
     return _completionFromJson(response) as (bool, String?);
   }
 
-  Future<(List<String>? workflowIds, String? error)> configureWithToken(
-    TokenConnectionConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "configureWithToken",
-      [config.toJson()],
-    );
-    return _completionFromJson(
-      response,
-      fromJson: (json) => (json as List<dynamic>?)?.cast<String>(),
-    );
+  Future<(List<String>? workflowIds, String? error)> configureWithToken(TokenConnectionConfig config) async {
+    var response = await _bridge.invokeMethod("configureWithToken", [config.toJson()]);
+    return _completionFromJson(response, fromJson: (json) => (json as List<dynamic>?)?.cast<String>());
   }
 
-  Future<(bool success, String? error)> configureWithCredentials(
-    CredentialsConnectionConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "configureWithCredentials",
-      [config.toJson()],
-    );
+  Future<(bool success, String? error)> configureWithCredentials(CredentialsConnectionConfig config) async {
+    var response = await _bridge.invokeMethod("configureWithCredentials", [config.toJson()]);
     return _completionFromJson(response) as (bool, String?);
   }
 
-  Future<(bool success, String? error)> configureWithApiKey(
-      ApiKeyConnectionConfig config) async {
-    var response = await _bridge.invokeMethod(
-      "configureWithApiKey",
-      [config.toJson()],
-    );
+  Future<(bool success, String? error)> configureWithApiKey(ApiKeyConnectionConfig config) async {
+    var response = await _bridge.invokeMethod("configureWithApiKey", [config.toJson()]);
     return _completionFromJson(response) as (bool, String?);
   }
 
-  Future<(Workflow? workflow, String? error)> prepareWorkflow(
-    PrepareWorkflowConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "prepareWorkflow",
-      [config.toJson()],
-    );
+  Future<(Workflow? workflow, String? error)> prepareWorkflow(PrepareWorkflowConfig config) async {
+    var response = await _bridge.invokeMethod("prepareWorkflow", [config.toJson()]);
     return _completionFromJson(response, fromJson: Workflow.fromJson);
   }
 
-  Future<(WorkflowResult? result, String? error)> startWorkflow({
-    StartWorkflowConfig? config,
-  }) async {
-    var response = await _bridge.invokeMethod(
-      "startWorkflow",
-      [config?.toJson()],
-    );
+  Future<(WorkflowResult? result, String? error)> startWorkflow({StartWorkflowConfig? config}) async {
+    var response = await _bridge.invokeMethod("startWorkflow", [config?.toJson()]);
     return _completionFromJson(response, fromJson: WorkflowResult.fromJson);
   }
 
@@ -117,36 +98,26 @@ class IDV {
     var response = await _bridge.invokeMethod("getWorkflows", []);
     return _completionFromJson(
       response,
-      fromJson: (json) => (json as List<dynamic>)
-          .map((item) => Workflow.fromJson(item)!)
-          .toList(),
+      fromJson: (json) => (json as List<dynamic>).map((item) => Workflow.fromJson(item)!).toList(),
     );
   }
 
-  Future<(String? sessionId, String? error)> startSession(
-    StartSessionConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "startSession",
-      [config.toJson()],
-    );
+  Future<(String? sessionId, String? error)> startSession(StartSessionConfig config) async {
+    var response = await _bridge.invokeMethod("startSession", [config.toJson()]);
     return _completionFromJson(response) as (String?, String?);
   }
 
-  Future<(bool success, String? error)> sendData(
-    SendDataConfig config,
-  ) async {
-    var response = await _bridge.invokeMethod(
-      "sendData",
-      [config.toJson()],
-    );
+  Future<(bool success, String? error)> sendData(SendDataConfig config) async {
+    var response = await _bridge.invokeMethod("sendData", [config.toJson()]);
     return _completionFromJson(response) as (bool, String?);
   }
 
-  (T? success, String? error) _completionFromJson<T>(
-    String jsonString, {
-    T? Function(dynamic)? fromJson,
-  }) {
+  Future<(bool success, String? error)> startLogin(LoginConfig config) async {
+    var response = await _bridge.invokeMethod("startLogin", [config.toJson()]);
+    return _completionFromJson(response) as (bool, String?);
+  }
+
+  (T? success, String? error) _completionFromJson<T>(String jsonString, {T? Function(dynamic)? fromJson}) {
     var json = _decode(jsonString);
     var success = json["success"];
     var error = json["error"];
@@ -167,6 +138,33 @@ enum SessionRestoreMode {
     if (i == null) return null;
     try {
       return SessionRestoreMode.values.firstWhere((x) => x.value == i);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+typedef IdvLogEventCompletion = void Function(
+  IdvLogLevel level,
+  String message,
+);
+
+enum IdvLogLevel {
+  DEBUG(0),
+
+  INFO(1),
+
+  WARNING(2),
+
+  ERROR(3);
+
+  const IdvLogLevel(this.value);
+  final int value;
+
+  static IdvLogLevel? getByValue(int? i) {
+    if (i == null) return null;
+    try {
+      return IdvLogLevel.values.firstWhere((x) => x.value == i);
     } catch (_) {
       return null;
     }

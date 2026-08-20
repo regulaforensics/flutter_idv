@@ -7,19 +7,13 @@ class WorkflowStep {
   String get name => _name;
   String _name;
 
-  WorkflowStep._(
-    this._id,
-    this._name,
-  );
+  WorkflowStep._(this._id, this._name);
 
   @visibleForTesting
   static WorkflowStep? fromJson(json) {
     if (json == null) return null;
 
-    var result = WorkflowStep._(
-      json["id"],
-      json["name"],
-    );
+    var result = WorkflowStep._(json["id"], json["name"]);
 
     return result;
   }

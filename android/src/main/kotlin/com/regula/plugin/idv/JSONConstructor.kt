@@ -4,6 +4,7 @@ package com.regula.plugin.idv
 
 import com.regula.idv.api.config.ApiKeyConnectionConfig
 import com.regula.idv.api.config.CredentialsConnectionConfig
+import com.regula.idv.api.config.LoginConfig
 import com.regula.idv.api.config.PrepareWorkflowConfig
 import com.regula.idv.api.config.SendDataConfig
 import com.regula.idv.api.config.SessionConfig
@@ -113,6 +114,28 @@ fun generateStartSessionConfig(input: SessionConfig?) = input?.let {
     mapOf(
         "workflowId" to it.workflowId,
         "metadata" to it.metadata,
+    ).toJson()
+}
+
+fun loginConfigFromJSON(input: JSONObject) = input.let {
+    val builder = LoginConfig.Builder()
+
+    builder.setApplicationId(input.getString("applicationId"))
+    builder.setBaseUrl(input.getString("baseUrl"))
+    input.getStringOrNull("locale")?.let { builder.setLocale(it) }
+    input.getJSONObjectOrNull("metadata")?.let { builder.setMetadata(it) }
+    input.getIntOrNull("httpTimeoutMs")?.let { builder.setHttpTimeoutMs(it) }
+
+    builder.build()
+}
+
+fun generateLoginConfig(input: LoginConfig) = input.let {
+    mapOf(
+        "applicationId" to it.applicationId,
+        "baseUrl" to it.baseUrl,
+        "locale" to it.locale,
+        "metadata" to it.metadata,
+        "httpTimeoutMs" to it.httpTimeoutMs,
     ).toJson()
 }
 

@@ -6,12 +6,15 @@ import com.regula.idv.api.enums.SessionRestoreMode
 import com.regula.idv.api.listeners.IdvSdkListener
 import com.regula.idv.module.BaseException
 import com.regula.idv.module.IModule
+import com.regula.idv.module.enums.IdvLogLevel
+import org.json.JSONArray
 import org.json.JSONObject
 
 const val didStartSessionEvent = "didStartSessionEvent"
 const val didEndSessionEvent = "didEndSessionEvent"
 const val didStartRestoreSessionEvent = "didStartRestoreSessionEvent"
 const val didContinueRemoteSessionEvent = "didContinueRemoteSessionEvent"
+const val didReceiveLogEventEvent = "didReceiveLogEventEvent"
 
 val allModules = listOf(
     "com.regula.idv.docreader.DocReaderModule",
@@ -20,6 +23,7 @@ val allModules = listOf(
 
 fun methodCall(method: String, callback: Callback): Any = when (method) {
     "setSessionRestoreMode" -> instance().sessionRestoreMode = SessionRestoreMode.entries[args(0)]
+    "setLogLevel" -> instance().logLevel = HashSet(args<JSONArray>(0).toList<Int>().map { IdvLogLevel.entries[it] })
     "getCurrentSessionId" -> callback(instance().currentSessionId())
     "initialize" -> initialize(callback)
     "deinitialize" -> deinitialize(callback)
@@ -29,8 +33,9 @@ fun methodCall(method: String, callback: Callback): Any = when (method) {
     "prepareWorkflow" -> prepareWorkflow(callback, args(0))
     "startWorkflow" -> startWorkflow(callback, argsNullable(0))
     "getWorkflows" -> getWorkflows(callback)
-    "startSession" -> startSession(args(0), callback)
-    "sendData" -> sendData(args(0), callback)
+    "startSession" -> startSession(callback, args(0))
+    "sendData" -> sendData(callback, args(0))
+    "startLogin" -> startLogin(callback, args(0))
     else -> Unit
 }
 
@@ -50,59 +55,44 @@ fun initialize(callback: Callback) {
     }
 }
 
-fun deinitialize(callback: Callback) {
-    instance().deinitialize(context) {
-        generateCompletion(
-            it.isSuccess,
-            it.exceptionOrNull() as BaseException?
-        ).send(callback)
-    }
+fun deinitialize(callback: Callback) = instance().deinitialize {
+    generateCompletion(
+        it.isSuccess,
+        it.exceptionOrNull() as BaseException?
+    ).send(callback)
 }
 
-
-fun configureWithToken(callback: Callback, data: JSONObject) = instance().configure(
-    context,
-    tokenConnectionConfigFromJSON(data)
-) {
+fun configureWithToken(callback: Callback, config: JSONObject) = instance().configure(tokenConnectionConfigFromJSON(config)) {
     generateCompletion(
         it.getOrNull(),
         it.exceptionOrNull() as BaseException?
     ).send(callback)
 }
 
-fun configureWithCredentials(callback: Callback, data: JSONObject) = instance().configure(
-    context,
-    credentialsConnectionConfigFromJSON(data)
-) {
+fun configureWithCredentials(callback: Callback, config: JSONObject) = instance().configure(credentialsConnectionConfigFromJSON(config)) {
     generateCompletion(
         it.isSuccess,
         it.exceptionOrNull() as BaseException?
     ).send(callback)
 }
 
-fun configureWithApiKey(callback: Callback, data: JSONObject) = instance().configure(
-    context,
-    apiKeyConnectionConfigFromJSON(data)
-) {
+fun configureWithApiKey(callback: Callback, config: JSONObject) = instance().configure(apiKeyConnectionConfigFromJSON(config)) {
     generateCompletion(
         it.isSuccess,
         it.exceptionOrNull() as BaseException?
     ).send(callback)
 }
 
-fun prepareWorkflow(callback: Callback, data: JSONObject) = instance().prepareWorkflow(
-    context,
-    prepareWorkflowConfigFromJSON(data)
-) {
+fun prepareWorkflow(callback: Callback, config: JSONObject) = instance().prepareWorkflow(prepareWorkflowConfigFromJSON(config)) {
     generateCompletion(
         generateWorkflow(it.getOrNull()),
         it.exceptionOrNull() as BaseException?
     ).send(callback)
 }
 
-fun startWorkflow(callback: Callback, data: JSONObject?) = instance().startWorkflow(
+fun startWorkflow(callback: Callback, config: JSONObject?) = instance().startWorkflow(
     activity,
-    startWorkflowConfigFromJSON(data)
+    startWorkflowConfigFromJSON(config)
 ) {
     generateCompletion(
         generateWorkflowResult(it.getOrNull()),
@@ -117,7 +107,7 @@ fun getWorkflows(callback: Callback) = instance().getWorkflows {
     ).send(callback)
 }
 
-fun startSession(config: JSONObject, callback: Callback) = instance().startSession(
+fun startSession(callback: Callback, config: JSONObject) = instance().startSession(
     startSessionConfigFromJSON(config)!!
 ) {
     generateCompletion(
@@ -126,9 +116,16 @@ fun startSession(config: JSONObject, callback: Callback) = instance().startSessi
     ).send(callback)
 }
 
-fun sendData(config: JSONObject, callback: Callback) = instance().sendData(
+fun sendData(callback: Callback, config: JSONObject) = instance().sendData(
     sendDataConfigFromJSON(config)!!
 ) {
+    generateCompletion(
+        it.isSuccess,
+        it.exceptionOrNull() as BaseException?
+    ).send(callback)
+}
+
+fun startLogin(callback: Callback, config: JSONObject) = instance().startLogin(loginConfigFromJSON(config)) {
     generateCompletion(
         it.isSuccess,
         it.exceptionOrNull() as BaseException?
@@ -141,4 +138,8 @@ var listener = object : IdvSdkListener {
     override fun didEndSession() = sendEvent(didEndSessionEvent)
     override fun didStartRestoreSession() = sendEvent(didStartRestoreSessionEvent)
     override fun didContinueRemoteSession() = sendEvent(didContinueRemoteSessionEvent)
+    override fun didReceiveLogEvent(level: IdvLogLevel, message: String) = sendEvent(didReceiveLogEventEvent, mapOf(
+        "level" to level.ordinal,
+        "message" to message,
+    ).toJson())
 }

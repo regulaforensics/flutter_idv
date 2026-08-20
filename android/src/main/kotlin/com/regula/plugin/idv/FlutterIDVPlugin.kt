@@ -68,6 +68,7 @@ class FlutterIDVPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             didEndSessionEvent,
             didStartRestoreSessionEvent,
             didContinueRemoteSessionEvent,
+            didReceiveLogEventEvent,
         )) setupEventChannel(event)
         MethodChannel(binding.binaryMessenger, "$channelID/method").setMethodCallHandler(this)
     }

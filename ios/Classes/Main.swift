@@ -4,10 +4,12 @@ let didStartSessionEvent = "didStartSessionEvent"
 let didEndSessionEvent = "didEndSessionEvent"
 let didStartRestoreSessionEvent = "didStartRestoreSessionEvent"
 let didContinueRemoteSessionEvent = "didContinueRemoteSessionEvent"
+let didReceiveLogEventEvent = "didReceiveLogEventEvent"
 
 func methodCall(_ method: String, _ callback: @escaping Callback) {
     switch method {
     case("setSessionRestoreMode"): IDV.shared.sessionRestoreMode = SessionRestoreMode(rawValue: args(0))!
+    case("setLogLevel"): IDV.shared.logLevel = Set((args(0) as [Int]).compactMap{ IDVLogLevel(rawValue:  $0) })
     case("getCurrentSessionId"): callback(IDV.shared.currentSessionId)
     case("initialize"): initialize(callback)
     case("deinitialize"): deinitialize(callback)
@@ -19,6 +21,7 @@ func methodCall(_ method: String, _ callback: @escaping Callback) {
     case("getWorkflows"): getWorkflows(callback)
     case("startSession"): startSession(callback, args(0))
     case("sendData"): sendData(callback, args(0))
+    case("startLogin"): startLogin(callback, args(0))
     default: break
     }
 }
@@ -93,6 +96,16 @@ func sendData(_ callback: @escaping Callback, _ data: [String: Any?]) {
     })
 }
 
+func startLogin(_ callback: @escaping Callback, _ data: [String: Any?]) {
+    DispatchQueue.main.async {
+        IDV.shared.startLogin(presenter: rootViewController()!,
+                                 config: loginConfigFromJSON(data),
+                                 completion: { result in
+            callback(generateCompletion(result.successOrNil, result.failureOrNil))
+        })
+    }
+}
+
 
 // MARK: - WeakReference
 
@@ -101,5 +114,11 @@ class IDVDelegate: IDVSDK.IDVDelegate {
     func didEndSession(idv: IDV) { sendEvent(didEndSessionEvent) }
     func didStartRestoreSession(idv: IDV) { sendEvent(didStartRestoreSessionEvent) }
     func didContinueRemoteSession(idv: IDV) { sendEvent(didContinueRemoteSessionEvent) }
+    func didReceiveLogEvent(idv: IDV, logEvent: IDVSDK.IDVLogEvent) {
+        sendEvent(didReceiveLogEventEvent, [
+            "level": logEvent.logLevel.rawValue,
+            "message": logEvent.message,
+        ])
+    }
 }
 let delegate = IDVDelegate()

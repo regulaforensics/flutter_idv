@@ -18,9 +18,7 @@ var prepareWorkflowConfig = {
 };
 var startWorkflowConfig = {
   "locale": "test1",
-  "metadata": {
-    "test2": "test3",
-  },
+  "metadata": {"test2": "test3"},
 };
 var startSessionConfig = {
   "workflowId": "test1",
@@ -30,6 +28,13 @@ var sendDataConfig = {
   "sessionId": "test1",
   "step": "test2",
   "data": {"test1": 0, "test2": "test3", "test4": true},
+};
+var loginConfig = {
+  "applicationId": "test1",
+  "baseUrl": "test2",
+  "locale": "test3",
+  "metadata": {"test1": 0, "test2": "test3", "test4": true},
+  "httpTimeoutMs": 0,
 };
 
 var workflow = {
