@@ -1,3 +1,5 @@
+import Foundation
+
 public typealias Callback = (Any?) -> Void
 
 var args: [Any?] = []

@@ -4,8 +4,7 @@ publish_to: none
 version: 1.0.0
 
 environment:
-  sdk: '>=3.1.5 <4.0.0'
-  flutter: '>=3.10.0'
+  sdk: ^3.10.0
 
 dependencies:
   path_provider: ^2.1.5
@@ -14,16 +13,15 @@ dependencies:
     sdk: flutter
   flutter_idv:
     path: ../
-  flutter_idv_module_document_reader: 3.8.197
-  flutter_idv_module_face: 3.8.198
-  flutter_document_reader_core_fullauthrfid: 9.7.2883
-  flutter_face_core_basic: 8.3.635
-  cupertino_icons: ^1.0.8
+  flutter_idv_module_document_reader: 3.10.349-beta
+  flutter_idv_module_face: 3.10.350-beta
+  flutter_document_reader_core_fullauthrfid: 9.8.3104-rc
+  flutter_face_core_basic: 8.4.693-rc
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true

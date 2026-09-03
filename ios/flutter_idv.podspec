@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_idv'
-  s.version          = '3.10.344-beta'
+  s.version          = '3.10.368-beta'
   s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
 A new flutter plugin project.
@@ -9,7 +9,7 @@ A new flutter plugin project.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'flutter_idv/Sources/flutter_idv/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '14.0'
   s.dependency 'IDVSDK', '3.9.1987'
