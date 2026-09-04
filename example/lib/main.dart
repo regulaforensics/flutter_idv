@@ -106,9 +106,9 @@ void setWorkflows(List<Workflow> data) {
 }
 
 List<Widget> customHeader() => [
-      header([label(status)]),
-      header(top: false, visible: description != null, [label(description ?? "", small: true)])
-    ];
+  header([label(status)]),
+  header(top: false, visible: description != null, [label(description ?? "", small: true)]),
+];
 
 List<Widget> ui() {
   return [
@@ -135,30 +135,38 @@ List<Widget> ui() {
 }
 
 Widget button(String text, VoidCallback onPressed) => Padding(
-    padding: EdgeInsets.all(5),
-    child: SizedBox(height: 40, child: FilledButton(onPressed: onPressed, child: Text(text))));
+  padding: EdgeInsets.all(5),
+  child: SizedBox(
+    height: 40,
+    child: FilledButton(onPressed: onPressed, child: Text(text)),
+  ),
+);
 
 Widget label(String text, {bool small = false}) => Padding(
-    padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
-    child: Text(
-      text,
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: small ? 15 : 18, fontWeight: FontWeight.w600),
-    ));
+  padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
+  child: Text(
+    text,
+    textAlign: TextAlign.center,
+    style: TextStyle(fontSize: small ? 15 : 18, fontWeight: FontWeight.w600),
+  ),
+);
 
 Widget header(List<Widget> children, {bool top = true, visible = true}) => Visibility(
-    visible: visible,
-    child: Container(
-      padding: EdgeInsets.only(top: top ? 70 : 13),
-      color: Colors.black.withValues(alpha: 0.03),
-      child: Column(children: [
+  visible: visible,
+  child: Container(
+    padding: EdgeInsets.only(top: top ? 70 : 13),
+    color: Colors.black.withValues(alpha: 0.03),
+    child: Column(
+      children: [
         ...children,
         Container(
           margin: EdgeInsets.only(top: 13),
           child: Divider(height: 1, thickness: 1, color: Color.fromRGBO(0, 0, 0, 0.075)),
         ),
-      ]),
-    ));
+      ],
+    ),
+  ),
+);
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -175,9 +183,10 @@ class MyAppState extends State<MyApp> {
 
   @override
   Widget build(_) => MaterialApp(
-      theme: ThemeData(colorScheme: theme),
-      home: Scaffold(
-        body: Column(children: [
+    theme: ThemeData(colorScheme: theme),
+    home: Scaffold(
+      body: Column(
+        children: [
           ...customHeader(),
           Expanded(
             child: Padding(
@@ -185,12 +194,14 @@ class MyAppState extends State<MyApp> {
               child: Column(children: ui()),
             ),
           ),
-        ]),
-      ));
+        ],
+      ),
+    ),
+  );
 
   static final theme = ColorScheme.fromSwatch(accentColor: Color(0xFF4285F4));
   static late MyAppState instance;
-  static update(VoidCallback state) => {instance.setState(state)};
+  static void update(VoidCallback state) => {instance.setState(state)};
 }
 
 class MyApp extends StatefulWidget {
