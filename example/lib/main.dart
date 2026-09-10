@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 
 const loginType = Configuration.credentials;
 const baseUrl = "https://idv.regula.app";
-const username = "pavel.masiuk";
-const password = "jidroz-5cuDqo-dopkox";
+const username = "username_placeholder";
+const password = "password_placeholder";
 const tokenUrl = "token_placeholder";
 const apiKey = "api_key_placeholder";
 

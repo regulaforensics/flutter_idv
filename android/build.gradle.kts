@@ -1,6 +1,10 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
+plugins {
+    id("com.android.library")
+}
+
 rootProject.allprojects {
     repositories {
         google()
@@ -10,10 +14,6 @@ rootProject.allprojects {
             isAllowInsecureProtocol = true
         }
     }
-}
-
-plugins {
-    id("com.android.library")
 }
 
 val agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.substringBefore('.').toInt()
@@ -27,7 +27,7 @@ if (agpMajor < 9 || !builtInKotlinEnabled) {
 
 android {
     namespace = "com.regula.plugin.idv"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
@@ -63,7 +63,7 @@ extensions.configure<KotlinAndroidProjectExtension> {
 }
 
 dependencies {
-    implementation("com.regula.idv:api:3.10.421") {
+    implementation("com.regula.idv:api:3.10.423") {
         isTransitive = true
     }
 
