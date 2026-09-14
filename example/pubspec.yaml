@@ -16,7 +16,7 @@ dependencies:
   flutter_idv_module_document_reader: 9.6.193-rc
   flutter_idv_module_face: 9.6.194-rc
   flutter_document_reader_core_fullauthrfid: 9.9.3168-rc
-  flutter_face_core_basic: 8.4.709-nightly
+  flutter_face_core_basic: 8.4.712-nightly
 
 dev_dependencies:
   flutter_test:
