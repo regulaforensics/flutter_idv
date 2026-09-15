@@ -3,7 +3,7 @@ import 'package:flutter_idv/flutter_idv.dart';
 import 'package:flutter/services.dart';
 
 const loginType = Configuration.credentials;
-const baseUrl = "https://idv.regula.app";
+const baseUrl = "https://app.idv-platform.com";
 const username = "username_placeholder";
 const password = "password_placeholder";
 const tokenUrl = "token_placeholder";

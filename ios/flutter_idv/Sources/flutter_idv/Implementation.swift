@@ -29,7 +29,7 @@ func methodCall(_ method: String, _ callback: @escaping Callback) {
 // MARK: - Implementation
 
 func initialize(_ callback: @escaping Callback) {
-    DispatchQueue.main.async {
+    runAsync { _ in
         IDV.shared.initialize(config: IDVInitConfig(), completion: { result in
             IDV.shared.delegate = delegate
             callback(generateCompletion(result.isSuccess, result.failureOrNil))
@@ -68,8 +68,8 @@ func prepareWorkflow(_ callback: @escaping Callback, _ data: [String: Any?]) {
 }
 
 func startWorkflow(_ callback: @escaping Callback, _ data: [String: Any?]?) {
-    DispatchQueue.main.async {
-        IDV.shared.startWorkflow(presenter: rootViewController()!,
+    runAsync { presenter in
+        IDV.shared.startWorkflow(presenter: presenter,
                                  config: startWorkflowConfigFromJSON(input: data),
                                  completion: { result in
             callback(generateCompletion(generateWorkflowResult(result.successOrNil), result.failureOrNil))
@@ -97,8 +97,8 @@ func sendData(_ callback: @escaping Callback, _ data: [String: Any?]) {
 }
 
 func startLogin(_ callback: @escaping Callback, _ data: [String: Any?]) {
-    DispatchQueue.main.async {
-        IDV.shared.startLogin(presenter: rootViewController()!,
+    runAsync { presenter in
+        IDV.shared.startLogin(presenter: presenter,
                                  config: loginConfigFromJSON(data),
                                  completion: { result in
             callback(generateCompletion(result.successOrNil, result.failureOrNil))
