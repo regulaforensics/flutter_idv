@@ -9,7 +9,7 @@ let package = Package(
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
         .package(
             url: "https://github.com/regulaforensics/IDVSDK-Swift-Package",
-            exact: "3.10.2073-nightly"
+            exact: "3.10.2076-nightly"
         ),
     ],
     targets: [
