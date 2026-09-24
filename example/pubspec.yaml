@@ -15,8 +15,8 @@ dependencies:
     path: ../
   flutter_idv_module_document_reader: 4.0.274-nightly
   flutter_idv_module_face: 4.0.275-nightly
-  flutter_document_reader_core_fullauthrfid: 9.9.3282-rc
-  flutter_face_core_basic: 8.4.730-nightly
+  flutter_document_reader_core_fullauthrfid: 9.9.3297-rc
+  flutter_face_core_basic: 8.4.733-nightly
 
 dev_dependencies:
   flutter_test:
